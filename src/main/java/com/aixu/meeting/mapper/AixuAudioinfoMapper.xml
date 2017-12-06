@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aixu.meeting.dao.AixuAudioinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.aixu.meeting.domain.AixuAudioinfo" >
+    <id column="AU_ID" property="auId" jdbcType="VARCHAR" />
+    <result column="AU_ACCOUNT" property="auAccount" jdbcType="VARCHAR" />
+    <result column="AU_PASSWORD" property="auPassword" jdbcType="VARCHAR" />
+    <result column="AU_RESONE" property="auResone" jdbcType="VARCHAR" />
+    <result column="AU_RESTWO" property="auRestwo" jdbcType="VARCHAR" />
+    <result column="AU_RESTHREE" property="auResthree" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    AU_ID, AU_ACCOUNT, AU_PASSWORD, AU_RESONE, AU_RESTWO, AU_RESTHREE
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.aixu.meeting.domain.AixuAudioinfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from aixu_audioinfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from aixu_audioinfo
+    where AU_ID = #{auId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from aixu_audioinfo
+    where AU_ID = #{auId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.aixu.meeting.domain.AixuAudioinfoExample" >
+    delete from aixu_audioinfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.aixu.meeting.domain.AixuAudioinfo" >
+    insert into aixu_audioinfo (AU_ID, AU_ACCOUNT, AU_PASSWORD, 
+      AU_RESONE, AU_RESTWO, AU_RESTHREE
+      )
+    values (#{auId,jdbcType=VARCHAR}, #{auAccount,jdbcType=VARCHAR}, #{auPassword,jdbcType=VARCHAR}, 
+      #{auResone,jdbcType=VARCHAR}, #{auRestwo,jdbcType=VARCHAR}, #{auResthree,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.aixu.meeting.domain.AixuAudioinfo" >
+    insert into aixu_audioinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="auId != null" >
+        AU_ID,
+      </if>
+      <if test="auAccount != null" >
+        AU_ACCOUNT,
+      </if>
+      <if test="auPassword != null" >
+        AU_PASSWORD,
+      </if>
+      <if test="auResone != null" >
+        AU_RESONE,
+      </if>
+      <if test="auRestwo != null" >
+        AU_RESTWO,
+      </if>
+      <if test="auResthree != null" >
+        AU_RESTHREE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="auId != null" >
+        #{auId,jdbcType=VARCHAR},
+      </if>
+      <if test="auAccount != null" >
+        #{auAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="auPassword != null" >
+        #{auPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="auResone != null" >
+        #{auResone,jdbcType=VARCHAR},
+      </if>
+      <if test="auRestwo != null" >
+        #{auRestwo,jdbcType=VARCHAR},
+      </if>
+      <if test="auResthree != null" >
+        #{auResthree,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.aixu.meeting.domain.AixuAudioinfoExample" resultType="java.lang.Integer" >
+    select count(*) from aixu_audioinfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update aixu_audioinfo
+    <set >
+      <if test="record.auId != null" >
+        AU_ID = #{record.auId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auAccount != null" >
+        AU_ACCOUNT = #{record.auAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auPassword != null" >
+        AU_PASSWORD = #{record.auPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auResone != null" >
+        AU_RESONE = #{record.auResone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auRestwo != null" >
+        AU_RESTWO = #{record.auRestwo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auResthree != null" >
+        AU_RESTHREE = #{record.auResthree,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update aixu_audioinfo
+    set AU_ID = #{record.auId,jdbcType=VARCHAR},
+      AU_ACCOUNT = #{record.auAccount,jdbcType=VARCHAR},
+      AU_PASSWORD = #{record.auPassword,jdbcType=VARCHAR},
+      AU_RESONE = #{record.auResone,jdbcType=VARCHAR},
+      AU_RESTWO = #{record.auRestwo,jdbcType=VARCHAR},
+      AU_RESTHREE = #{record.auResthree,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aixu.meeting.domain.AixuAudioinfo" >
+    update aixu_audioinfo
+    <set >
+      <if test="auAccount != null" >
+        AU_ACCOUNT = #{auAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="auPassword != null" >
+        AU_PASSWORD = #{auPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="auResone != null" >
+        AU_RESONE = #{auResone,jdbcType=VARCHAR},
+      </if>
+      <if test="auRestwo != null" >
+        AU_RESTWO = #{auRestwo,jdbcType=VARCHAR},
+      </if>
+      <if test="auResthree != null" >
+        AU_RESTHREE = #{auResthree,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where AU_ID = #{auId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aixu.meeting.domain.AixuAudioinfo" >
+    update aixu_audioinfo
+    set AU_ACCOUNT = #{auAccount,jdbcType=VARCHAR},
+      AU_PASSWORD = #{auPassword,jdbcType=VARCHAR},
+      AU_RESONE = #{auResone,jdbcType=VARCHAR},
+      AU_RESTWO = #{auRestwo,jdbcType=VARCHAR},
+      AU_RESTHREE = #{auResthree,jdbcType=VARCHAR}
+    where AU_ID = #{auId,jdbcType=VARCHAR}
+  </update>
+</mapper>

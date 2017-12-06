@@ -1,0 +1,55 @@
+package com.aixu.meeting.utils;
+
+import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+
+import com.aiko.config.rest.RestTemplateApi;
+
+/**
+ * @author 作者 : aknb206
+ * @version 创建时间：2017年10月17日 上午9:17:58 类说明
+ */
+@Component
+public class WxcpApi {
+	public static final int TEXT = 1;
+	public static final int NEWS = 2;
+	public static final int IMAGE = 3;
+
+	private static final String TEXT_SERVICE="/sendMsg/sendText";
+	private static final String NEWS_SERVICE="/sendMsg/sendNews";
+	private static final String IMAGE_SERVICE="/sendMsg/sendImage";
+	private static final String wxcpServiceName="aiko-wxcp";
+	private static final String wxcpContextPath="/aiko-wxcp";
+	
+/*	@Value("${service.aiko-wxcp:aiko-wxcp}")
+	private void setWxcpServiceName(String name){
+		wxcpServiceName=name;
+	}
+	
+	@Value("${service.aiko-wxcp.context-path:/aiko-wxcp}")
+	private void setWxcpContextPath(String path){
+		wxcpContextPath=path;
+	}*/
+
+	private static String getTextService(int msgType) {
+		StringBuilder service = new StringBuilder();
+		service.append("http://");
+		service.append(wxcpServiceName);
+		service.append(wxcpContextPath);
+		
+		if (msgType == TEXT) {
+			service.append(TEXT_SERVICE);
+		} else if (msgType == NEWS) {
+			service.append(NEWS_SERVICE);
+		} else if (msgType == IMAGE) {
+			service.append(IMAGE_SERVICE);
+		} else {
+			service.append(TEXT_SERVICE);
+		}
+		return service.toString();
+	}
+
+	public static String send(int msgType, MultiValueMap<String, Object> requestEntity) {
+		return RestTemplateApi.postForObject(getTextService(msgType), requestEntity, String.class);
+	}
+}

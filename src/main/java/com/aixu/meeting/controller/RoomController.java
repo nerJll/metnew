@@ -1,0 +1,554 @@
+package com.aixu.meeting.controller;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.aiko.common.util.SystemApi;
+import com.aixu.meeting.domain.AikoUser;
+import com.aixu.meeting.domain.AixuMeeting;
+import com.aixu.meeting.domain.AixuMeetingroom;
+import com.aixu.meeting.domain.AixuMeetingroomExample;
+import com.aixu.meeting.service.MeetAndRoomService;
+import com.aixu.meeting.service.MeetService;
+import com.aixu.meeting.service.RoomService;
+import com.aixu.meeting.service.UserService;
+import com.aixu.meeting.utils.DateUtil;
+import com.github.pagehelper.PageInfo;
+
+@Controller
+@RequestMapping("room")
+public class RoomController {
+
+	@Autowired
+	private RoomService roomService;
+	@Autowired
+	private MeetAndRoomService meetAndRoomService;
+	@Autowired
+	private MeetService meetService;
+	@Autowired
+	private UserService userService;
+
+	/**
+	 * @des 更新视频号或端口的密码
+	 * @param type
+	 * @param account
+	 * @param password
+	 * @return
+	 */
+	@PostMapping("/updateRas")
+	public String updateRas(@RequestParam("type") String type, @RequestParam("account") String account,
+			@RequestParam("password") String password) {
+		try {
+			roomService.updateRas(type, account, password);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "redirect:/room/index";
+	}
+
+	/**
+	 * @desc 管理视频号和端口号
+	 * @param type
+	 * @param currentPage
+	 * @param pageSize
+	 * @return
+	 */
+	@GetMapping("/index")
+	public String index(@RequestParam(name = "type", required = false, defaultValue = "端口") String type,
+			@RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage,
+			@RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize, Model model) {
+		PageInfo<?> ras = roomService.getRoomAndSp(type, currentPage, pageSize);
+		model.addAttribute("ras", ras);
+		model.addAttribute("type", type);
+		return "admin/index";
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("get-room/{id}")
+	public String getRoomById(@PathVariable(name = "id") String id) {
+		roomService.getRoomById(id);
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	@RequestMapping("list-room")
+	@ResponseBody
+	public List<AixuMeetingroom> listRoom() {
+		AixuMeetingroomExample example = new AixuMeetingroomExample();
+		return roomService.listRoom(example);
+	}
+
+	/**
+	 * 修改会议室
+	 * 
+	 * @param room
+	 * @return
+	 */
+	@PostMapping("update-room")
+	public String updateRoom(AixuMeetingroom room) {
+		roomService.updateRoom(room);
+		return null;
+	}
+
+	/**
+	 * 删除会议室
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping("delete-room/{id}")
+	public String deleteRoom(@PathVariable(name = "id") String id) {
+		roomService.deleteRoom(id);
+		return null;
+	}
+
+	/**
+	 * 增加会议室
+	 * 
+	 * @param room
+	 * @return
+	 */
+	@RequestMapping("save-room")
+	public String saveRoom(AixuMeetingroom room) {
+		roomService.saveRoom(room);
+		return null;
+	}
+
+	/**
+	 * @param roomId
+	 * @return map<String,AixuMeeting>
+	 */
+	@GetMapping("/getRoomInfo")
+	@ResponseBody
+	public Map<String, Object> getRoomInfo(@RequestParam("roomId") String roomId,
+			@RequestParam("appDate") String appDate) {
+		Map<String, Object> map = new HashMap<>(2);
+		AixuMeetingroomExample exp = new AixuMeetingroomExample();
+		exp.createCriteria().andMeetRoomIdEqualTo(roomId);
+		AixuMeetingroom room = roomService.listRoom(exp).get(0);
+		List<String> meetIds = meetAndRoomService.getMeetIdsByRoomId(roomId);
+		List<AixuMeeting> meets = new ArrayList<>();
+		List<AixuMeeting> meets1 = new ArrayList<>();
+		if (meetIds != null) {
+			String toDay = "";
+			if (appDate == "" || appDate == null) {
+				toDay = DateUtil.getDateFormat(new Date());
+			} else {
+				toDay = appDate;
+			}
+			// System.out.println(toDay);
+			for (int i = 0; i < meetIds.size(); i++) {
+				String meetStaDate = DateUtil.getDateFormat(meetService.getMeetById(meetIds.get(i)).getStaTime());
+				// System.out.println(meetStaDate);
+				if (toDay.equals(meetStaDate)) {
+					meets.add(meetService.getMeetById(meetIds.get(i)));
+				}
+			}
+		}
+		if (meets != null) {
+			for (AixuMeeting aixuMeeting : meets) {
+				if (aixuMeeting.getMeetState().equals("已通过")) {
+					meets1.add(aixuMeeting);
+				}
+			}
+		}
+		Collections.sort(meets1, new Comparator<AixuMeeting>() {
+
+			/*
+			 * int compare(AixuMeeting o1, AixuMeeting o2) 返回一个基本类型的整型， 返回负数表示：o1 小于o2， 返回0
+			 * 表示：o1和o2相等， 返回正数表示：o1大于o2。
+			 */
+			public int compare(AixuMeeting o1, AixuMeeting o2) {
+
+				// 按照会议开始时间进行升序排列
+				if (o1.getStaTime().getTime() >= o2.getStaTime().getTime()) {
+					return 1;
+				} else {
+					return -1;
+				}
+			}
+		});
+		map.put("roomInfo", room);
+		map.put("meetInfo", meets1);
+		return map;
+	}
+
+	/**
+	 * 首页传递会议室id至预订界面 首页人员信息渲染
+	 * 
+	 * @param roomIds
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("order-page")
+	public String toOrderPage(@RequestParam(name = "rooms", required = false) String roomIds, Model model,
+			HttpServletRequest req, @RequestParam(name = "staTime", required = false) String staTime,
+			@RequestParam(name = "endTime", required = false) String endTime,
+			@RequestParam(name = "state", required = false) String state) {
+		// String userId = (String)SystemApi.getCurrentUser().get("userid");
+		// String userName = (String)SystemApi.getCurrentUser().get("name");
+		String userId = "1016087";
+		String userName = "姜林乐";
+
+		List<AixuMeetingroom> onlyTwo = new ArrayList<AixuMeetingroom>();
+		String[] roomId = roomIds.split(",");
+		for (int i = 0; i < roomId.length; i++) {
+			AixuMeetingroom roomById = roomService.getRoomById(roomId[i]);
+			onlyTwo.add(roomById);
+		}
+		List<AikoUser> userlist = userService.listAllUser();
+		// 总经办
+		List<AikoUser> zzb = userService.listUserByDeptId("150");
+		model.addAttribute("zzbs", zzb);
+		// 流程与IT部
+		ArrayList<AikoUser> it = new ArrayList<>();
+		List<AikoUser> it1 = userService.listUserByDeptId("151");
+		List<AikoUser> it2 = userService.listUserByDeptId("208");
+		it.addAll(it1);
+		it.addAll(it2);
+		model.addAttribute("its", it);
+		// 人力资源与行政部
+		List<AikoUser> rlzy = userService.listUserByDeptId("153");
+		model.addAttribute("rlzys", rlzy);
+		// 采购
+		List<AikoUser> cg = userService.listUserByDeptId("158");
+		model.addAttribute("cgs", cg);
+		// 财务
+		List<AikoUser> cw = new ArrayList<>();
+		List<AikoUser> cw1 = userService.listUserByDeptId("152");
+		List<AikoUser> cw2 = userService.listUserByDeptId("204");
+		List<AikoUser> cw3 = userService.listUserByDeptId("205");
+		List<AikoUser> cw4 = userService.listUserByDeptId("206");
+		List<AikoUser> cw5 = userService.listUserByDeptId("207");
+		cw.addAll(cw1);
+		cw.addAll(cw2);
+		cw.addAll(cw3);
+		cw.addAll(cw4);
+		cw.addAll(cw5);
+		model.addAttribute("cws", cw);
+		// 销售
+		List<AikoUser> allXs = new ArrayList<>();
+		List<AikoUser> xs1 = userService.listUserByDeptId("155");
+		List<AikoUser> xs2 = userService.listUserByDeptId("156");
+		List<AikoUser> xs3 = userService.listUserByDeptId("157");
+		List<AikoUser> xs4 = userService.listUserByDeptId("190");
+		allXs.addAll(xs1);
+		allXs.addAll(xs2);
+		allXs.addAll(xs3);
+		allXs.addAll(xs4);
+		model.addAttribute("xs", allXs);
+		// 研发部
+		List<AikoUser> yf = userService.listUserByDeptId("159");
+		model.addAttribute("yfs", yf);
+		// 设备
+		List<AikoUser> sb = new ArrayList<>();
+		List<AikoUser> sb1 = userService.listUserByDeptId("164");
+		List<AikoUser> sb2 = userService.listUserByDeptId("191");
+		List<AikoUser> sb3 = userService.listUserByDeptId("192");
+		List<AikoUser> sb4 = userService.listUserByDeptId("193");
+		List<AikoUser> sb5 = userService.listUserByDeptId("194");
+		sb.addAll(sb1);
+		sb.addAll(sb2);
+		sb.addAll(sb3);
+		sb.addAll(sb4);
+		sb.addAll(sb5);
+		model.addAttribute("sbs", sb);
+		// 工艺
+		List<AikoUser> gy = new ArrayList<>();
+		List<AikoUser> gy1 = userService.listUserByDeptId("166");
+		List<AikoUser> gy2 = userService.listUserByDeptId("175");
+		List<AikoUser> gy3 = userService.listUserByDeptId("176");
+		List<AikoUser> gy4 = userService.listUserByDeptId("197");
+		List<AikoUser> gy5 = userService.listUserByDeptId("198");
+		List<AikoUser> gy6 = userService.listUserByDeptId("199");
+		List<AikoUser> gy7 = userService.listUserByDeptId("200");
+		gy.addAll(gy1);
+		gy.addAll(gy2);
+		gy.addAll(gy3);
+		gy.addAll(gy4);
+		gy.addAll(gy5);
+		gy.addAll(gy6);
+		gy.addAll(gy7);
+		model.addAttribute("gys", gy);
+		// 动力部
+		List<AikoUser> dl = new ArrayList<>();
+		List<AikoUser> dl1 = userService.listUserByDeptId("165");
+		List<AikoUser> dl2 = userService.listUserByDeptId("195");
+		List<AikoUser> dl3 = userService.listUserByDeptId("196");
+		dl.addAll(dl1);
+		dl.addAll(dl2);
+		dl.addAll(dl3);
+		model.addAttribute("dls", dl);
+		// 品质
+		ArrayList<Object> pz = new ArrayList<>();
+		List<AikoUser> pz1 = userService.listUserByDeptId("169");
+		List<AikoUser> pz2 = userService.listUserByDeptId("214");
+		List<AikoUser> pz3 = userService.listUserByDeptId("215");
+		List<AikoUser> pz4 = userService.listUserByDeptId("216");
+		List<AikoUser> pz5 = userService.listUserByDeptId("217");
+		List<AikoUser> pz6 = userService.listUserByDeptId("218");
+		List<AikoUser> pz7 = userService.listUserByDeptId("219");
+		pz.addAll(pz1);
+		pz.addAll(pz2);
+		pz.addAll(pz3);
+		pz.addAll(pz4);
+		pz.addAll(pz5);
+		pz.addAll(pz6);
+		pz.addAll(pz7);
+		model.addAttribute("zps", pz);
+		// 计划控制
+		List<AikoUser> jh = new ArrayList<>();
+		List<AikoUser> jh1 = userService.listUserByDeptId("171");
+		List<AikoUser> jh2 = userService.listUserByDeptId("178");
+		List<AikoUser> jh3 = userService.listUserByDeptId("179");
+		List<AikoUser> jh4 = userService.listUserByDeptId("180");
+		List<AikoUser> jh5 = userService.listUserByDeptId("181");
+		List<AikoUser> jh6 = userService.listUserByDeptId("182");
+		jh.addAll(jh1);
+		jh.addAll(jh2);
+		jh.addAll(jh3);
+		jh.addAll(jh4);
+		jh.addAll(jh5);
+		jh.addAll(jh6);
+		model.addAttribute("jhs", jh);
+		// 生管办
+		List<AikoUser> sgbs = userService.listUserByDeptId("170");
+		model.addAttribute("sgbs", sgbs);
+		// 生产部
+		List<AikoUser> scbs = new ArrayList<>();
+		List<AikoUser> scbs1 = userService.listUserByDeptId("174");
+		List<AikoUser> scbs2 = userService.listUserByDeptId("172");
+		List<AikoUser> scbs3 = userService.listUserByDeptId("173");
+		List<AikoUser> scbs4 = userService.listUserByDeptId("160");
+		List<AikoUser> scbs5 = userService.listUserByDeptId("177");
+		scbs.addAll(scbs1);
+		scbs.addAll(scbs2);
+		scbs.addAll(scbs3);
+		scbs.addAll(scbs4);
+		scbs.addAll(scbs5);
+		model.addAttribute("scbs", scbs);
+		// 填充
+		model.addAttribute("users", userlist);
+		// model.addAttribute("its", itList);
+		// model.addAttribute("zjbs", zjbList);
+		// model.addAttribute("rlzys", rlzyList);
+		// model.addAttribute("cws", cwList);
+		// model.addAttribute("xss", xsList);
+		// model.addAttribute("scbs", scbList);
+		// model.addAttribute("jhkzs", jhkzList);
+		// model.addAttribute("cgs", cgList);
+		// model.addAttribute("yfs", cgList);
+		// model.addAttribute("markets", marketList);
+		// model.addAttribute("pzs", pzList);
+		// // 销售
+		// model.addAttribute("xss", xsList);
+		// // 设备
+		// model.addAttribute("equps", equipList);
+		// 发送会议室
+		model.addAttribute("rooms", onlyTwo);
+		// 发送时间段
+		model.addAttribute("staTime", staTime);
+		model.addAttribute("endTime", endTime);
+		model.addAttribute("meetType", state);
+		// 发送申请人工号
+		model.addAttribute("userId", userId);
+		// 发送申请人姓名
+		model.addAttribute("userName", userName);
+		return "meet/order-meet";
+	}
+
+	@RequestMapping("order-page-mobile")
+	public String toOrderPageMobile(@RequestParam(name = "rooms", required = false) String roomIds, Model model,
+			HttpServletRequest req, @RequestParam(name = "staTime", required = false) String staTime,
+			@RequestParam(name = "endTime", required = false) String endTime,
+			@RequestParam(name = "state", required = false) String state) {
+		String userId = (String) SystemApi.getCurrentUser().get("userid");
+		String userName = (String) SystemApi.getCurrentUser().get("name");
+		// String userId = "1016046";
+		// String userName = "任博文";
+		List<AixuMeetingroom> onlyTwo = new ArrayList<AixuMeetingroom>();
+		String[] roomId = roomIds.split(",");
+		for (int i = 0; i < roomId.length; i++) {
+			AixuMeetingroom roomById = roomService.getRoomById(roomId[i]);
+			onlyTwo.add(roomById);
+		}
+		// 总经办
+		List<AikoUser> zzb = userService.listUserByDeptId("150");
+		model.addAttribute("zzbs", zzb);
+		// 流程与IT部
+		ArrayList<AikoUser> it = new ArrayList<>();
+		List<AikoUser> it1 = userService.listUserByDeptId("151");
+		List<AikoUser> it2 = userService.listUserByDeptId("208");
+		it.addAll(it1);
+		it.addAll(it2);
+		model.addAttribute("its", it);
+		// 人力资源与行政部
+		List<AikoUser> rlzy = userService.listUserByDeptId("153");
+		model.addAttribute("rlzys", rlzy);
+		// 采购
+		List<AikoUser> cg = userService.listUserByDeptId("158");
+		model.addAttribute("cgs", cg);
+		// 财务
+		List<AikoUser> cw = new ArrayList<>();
+		List<AikoUser> cw1 = userService.listUserByDeptId("152");
+		List<AikoUser> cw2 = userService.listUserByDeptId("204");
+		List<AikoUser> cw3 = userService.listUserByDeptId("205");
+		List<AikoUser> cw4 = userService.listUserByDeptId("206");
+		List<AikoUser> cw5 = userService.listUserByDeptId("207");
+		cw.addAll(cw1);
+		cw.addAll(cw2);
+		cw.addAll(cw3);
+		cw.addAll(cw4);
+		cw.addAll(cw5);
+		model.addAttribute("cws", cw);
+		// 销售
+		List<AikoUser> allXs = new ArrayList<>();
+		List<AikoUser> xs1 = userService.listUserByDeptId("155");
+		List<AikoUser> xs2 = userService.listUserByDeptId("156");
+		List<AikoUser> xs3 = userService.listUserByDeptId("157");
+		List<AikoUser> xs4 = userService.listUserByDeptId("190");
+		allXs.addAll(xs1);
+		allXs.addAll(xs2);
+		allXs.addAll(xs3);
+		allXs.addAll(xs4);
+		model.addAttribute("xs", allXs);
+		// 研发部
+		List<AikoUser> yf = userService.listUserByDeptId("159");
+		model.addAttribute("yfs", yf);
+		// 设备
+		List<AikoUser> sb = new ArrayList<>();
+		List<AikoUser> sb1 = userService.listUserByDeptId("164");
+		List<AikoUser> sb2 = userService.listUserByDeptId("191");
+		List<AikoUser> sb3 = userService.listUserByDeptId("192");
+		List<AikoUser> sb4 = userService.listUserByDeptId("193");
+		List<AikoUser> sb5 = userService.listUserByDeptId("194");
+		sb.addAll(sb1);
+		sb.addAll(sb2);
+		sb.addAll(sb3);
+		sb.addAll(sb4);
+		sb.addAll(sb5);
+		model.addAttribute("sbs", sb);
+		// 工艺
+		List<AikoUser> gy = new ArrayList<>();
+		List<AikoUser> gy1 = userService.listUserByDeptId("166");
+		List<AikoUser> gy2 = userService.listUserByDeptId("175");
+		List<AikoUser> gy3 = userService.listUserByDeptId("176");
+		List<AikoUser> gy4 = userService.listUserByDeptId("197");
+		List<AikoUser> gy5 = userService.listUserByDeptId("198");
+		List<AikoUser> gy6 = userService.listUserByDeptId("199");
+		List<AikoUser> gy7 = userService.listUserByDeptId("200");
+		gy.addAll(gy1);
+		gy.addAll(gy2);
+		gy.addAll(gy3);
+		gy.addAll(gy4);
+		gy.addAll(gy5);
+		gy.addAll(gy6);
+		gy.addAll(gy7);
+		model.addAttribute("gys", gy);
+		// 动力部
+		List<AikoUser> dl = new ArrayList<>();
+		List<AikoUser> dl1 = userService.listUserByDeptId("165");
+		List<AikoUser> dl2 = userService.listUserByDeptId("195");
+		List<AikoUser> dl3 = userService.listUserByDeptId("196");
+		dl.addAll(dl1);
+		dl.addAll(dl2);
+		dl.addAll(dl3);
+		model.addAttribute("dls", dl);
+		// 品质
+		ArrayList<Object> pz = new ArrayList<>();
+		List<AikoUser> pz1 = userService.listUserByDeptId("169");
+		List<AikoUser> pz2 = userService.listUserByDeptId("214");
+		List<AikoUser> pz3 = userService.listUserByDeptId("215");
+		List<AikoUser> pz4 = userService.listUserByDeptId("216");
+		List<AikoUser> pz5 = userService.listUserByDeptId("217");
+		List<AikoUser> pz6 = userService.listUserByDeptId("218");
+		List<AikoUser> pz7 = userService.listUserByDeptId("219");
+		pz.addAll(pz1);
+		pz.addAll(pz2);
+		pz.addAll(pz3);
+		pz.addAll(pz4);
+		pz.addAll(pz5);
+		pz.addAll(pz6);
+		pz.addAll(pz7);
+		model.addAttribute("zps", pz);
+		// 计划控制
+		List<AikoUser> jh = new ArrayList<>();
+		List<AikoUser> jh1 = userService.listUserByDeptId("171");
+		List<AikoUser> jh2 = userService.listUserByDeptId("178");
+		List<AikoUser> jh3 = userService.listUserByDeptId("179");
+		List<AikoUser> jh4 = userService.listUserByDeptId("180");
+		List<AikoUser> jh5 = userService.listUserByDeptId("181");
+		List<AikoUser> jh6 = userService.listUserByDeptId("182");
+		jh.addAll(jh1);
+		jh.addAll(jh2);
+		jh.addAll(jh3);
+		jh.addAll(jh4);
+		jh.addAll(jh5);
+		jh.addAll(jh6);
+		model.addAttribute("jhs", jh);
+		// 生管办
+		List<AikoUser> sgbs = userService.listUserByDeptId("170");
+		model.addAttribute("sgbs", sgbs);
+		// 生产部
+		List<AikoUser> scbs = new ArrayList<>();
+		List<AikoUser> scbs1 = userService.listUserByDeptId("174");
+		List<AikoUser> scbs2 = userService.listUserByDeptId("172");
+		List<AikoUser> scbs3 = userService.listUserByDeptId("173");
+		List<AikoUser> scbs4 = userService.listUserByDeptId("160");
+		List<AikoUser> scbs5 = userService.listUserByDeptId("177");
+		scbs.addAll(scbs1);
+		scbs.addAll(scbs2);
+		scbs.addAll(scbs3);
+		scbs.addAll(scbs4);
+		scbs.addAll(scbs5);
+		model.addAttribute("scbs", scbs);
+		// 发送会议室
+		model.addAttribute("rooms", onlyTwo);
+		// 发送时间段
+		Date st = DateUtil.formatDate(staTime, "yyyy-MM-dd HH:mm:ss");
+		Date ed = DateUtil.formatDate(endTime, "yyyy-MM-dd HH:mm:ss");
+		ZoneId zoneId = ZoneId.systemDefault();
+		LocalDateTime localSta = st.toInstant().atZone(zoneId).toLocalDateTime();
+		LocalDateTime localEnd = ed.toInstant().atZone(zoneId).toLocalDateTime();
+		// ----------
+		model.addAttribute("month", localSta.getMonthValue());
+		model.addAttribute("date", localSta.getDayOfMonth());
+		model.addAttribute("sth", localSta.getHour());
+		model.addAttribute("stm", localSta.getMinute());
+		model.addAttribute("endh", localEnd.getHour());
+		model.addAttribute("endm", localEnd.getMinute());
+		model.addAttribute("staTime", staTime);
+		model.addAttribute("endTime", endTime);
+		// 会议类型
+		model.addAttribute("meetType", state);
+		// 发送申请人工号
+		model.addAttribute("userId", userId);
+		// 发送申请人姓名
+		model.addAttribute("userName", userName);
+		return "meet/order-meet_2";
+	}
+}

@@ -1,0 +1,19 @@
+body{
+	background-color:#FFFFF0;
+}
+#head {
+	background-color: #006666;
+	height: 50px;
+	font-size: 20px;
+	font-weight: bold;
+	padding-top: 10px;
+	text-decoration: none;
+}
+
+#body {
+	height: 45px;
+	background-color: #FAFAFA;
+	padding-top: 5px;
+	font-size: 15px;
+	font-weight: bold;
+}

@@ -1,0 +1,131 @@
+package com.aixu.meeting.service;
+
+import java.util.Date;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.aixu.meeting.dao.AikoDeptMapper;
+import com.aixu.meeting.dao.AikoRecepempMapper;
+import com.aixu.meeting.dao.AikoUserMapper;
+import com.aixu.meeting.domain.AikoDept;
+import com.aixu.meeting.domain.AikoRecepemp;
+import com.aixu.meeting.domain.AikoRecepempExample;
+import com.aixu.meeting.domain.AikoUser;
+import com.aixu.meeting.domain.AikoUserExample;
+import com.aixu.meeting.utils.IDUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+@Service
+public class UserService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+	
+	@Autowired
+	private AikoUserMapper userDAO;
+	
+	@Autowired
+	private AikoDeptMapper deptDAO;
+	
+	@Autowired
+	private AikoRecepempMapper recepempDAO;
+	
+	public List<AikoUser> listAllUser () {
+		AikoUserExample example = new AikoUserExample();
+		example.createCriteria().andStatusEqualTo(1);
+		List<AikoUser> alUser = userDAO.selectByExample(example);
+		System.out.println(alUser.size());
+		for (AikoUser aikoUser : alUser) {
+			AikoDept dept = deptDAO.selectByPrimaryKey(aikoUser.getDeptid());
+			if(dept == null){
+				dept = new AikoDept("23", "23", "23", "23", "23", "23", "23",
+						new Date(), "23", new Date(), "23", 23, "23");
+				
+			}
+			aikoUser.setDeptName(dept.getName()==null?"":dept.getName());
+		}
+		return alUser;
+	}
+	
+	/**
+	 * 根据工号查询员工
+	 * @param no
+	 * @return
+	 */
+	public AikoUser getUserByNo(String no) {
+		System.out.println(no);
+		AikoUserExample example = new AikoUserExample();
+		example.createCriteria().andUseridEqualTo(no);
+		AikoUser aikoUser = userDAO.selectByExample(example).get(0);
+		return aikoUser;
+	}
+	
+	/**
+	 * 根据部门编号查询员工
+	 * @param deptId
+	 * @return
+	 */
+	public List<AikoUser> listUserByDeptId(String deptId) {
+		AikoUserExample example = new AikoUserExample();
+		example.createCriteria().andDeptidEqualTo(deptId).andStatusEqualTo(1);
+		List<AikoUser> userByDept = userDAO.selectByExample(example);
+		return userByDept;
+	}
+	
+	/**
+	 * 模糊查询
+	 * @param keyWord 关键字
+	 * @return 用户列表
+	 */
+	public List<AikoUser> listUserLikeKeyWord(String keyWord) {
+		AikoUserExample example = new AikoUserExample();
+		example.createCriteria().andNameLike(keyWord);
+		List<AikoUser> userList = userDAO.selectByExample(example);
+		return userList;
+	}
+	
+	/**
+	 * @return in内部的工号员工
+	 */
+	public List<AikoUser> listUserByMyNo() {
+		return userDAO.getUserByMyNo();
+	}
+
+	/**
+	 * @desc 返回所有前台人员
+	 * @param currentPage
+	 * @param pageSize
+	 * @return
+	 */
+	public PageInfo<?> getAllRecepemps(int currentPage, int pageSize) {
+		PageHelper.startPage(currentPage,pageSize);
+		List<AikoRecepemp> repemps = recepempDAO.selectByExample(new AikoRecepempExample());
+		return new PageInfo<AikoRecepemp>(repemps);
+	}
+
+	/**
+	 * @desc	新增前台人员
+	 * @param aikoRecepemp
+	 */
+	public void addRempEmp(AikoRecepemp aikoRecepemp) {
+		String rempId = IDUtils.getUuid(true);
+		aikoRecepemp.setRempId(rempId);
+		recepempDAO.insert(aikoRecepemp);
+	}
+	
+	/**
+	 * @desc	根据所属返回前台人员
+	 * @param empFrom
+	 * @return
+	 */
+	public List<AikoRecepemp> getRempEmpByFrom(String empFrom) {
+		AikoRecepempExample exp = new AikoRecepempExample();
+		exp.createCriteria().andRempResoneEqualTo(empFrom);
+		return recepempDAO.selectByExample(exp);
+	}
+}
+ 
