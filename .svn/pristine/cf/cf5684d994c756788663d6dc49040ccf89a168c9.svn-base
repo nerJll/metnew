@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aixu.meeting.dao.AikoLongapproomMapper" >
+<cache type="org.mybatis.caches.ehcache.EhcacheCache" />
+  <resultMap id="BaseResultMap" type="com.aixu.meeting.domain.AikoLongapproom" >
+    <id column="LP_ID" property="lpId" jdbcType="VARCHAR" />
+    <result column="LP_RESONE" property="lpResone" jdbcType="VARCHAR" />
+    <result column="LP_RESTWO" property="lpRestwo" jdbcType="VARCHAR" />
+    <result column="LP_RESTHREE" property="lpResthree" jdbcType="VARCHAR" />
+    <result column="LP_RESFOUR" property="lpResfour" jdbcType="VARCHAR" />
+    <result column="LP_RESFIVE" property="lpResfive" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.aixu.meeting.domain.AikoLongapproom" extends="BaseResultMap" >
+    <result column="LP_MEETIDS" property="lpMeetids" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    LP_ID, LP_RESONE, LP_RESTWO, LP_RESTHREE, LP_RESFOUR, LP_RESFIVE
+  </sql>
+  <sql id="Blob_Column_List" >
+    LP_MEETIDS
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.aixu.meeting.domain.AikoLongapproomExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from aiko_longapproom
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.aixu.meeting.domain.AikoLongapproomExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from aiko_longapproom
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from aiko_longapproom
+    where LP_ID = #{lpId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from aiko_longapproom
+    where LP_ID = #{lpId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.aixu.meeting.domain.AikoLongapproomExample" >
+    delete from aiko_longapproom
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.aixu.meeting.domain.AikoLongapproom" >
+    insert into aiko_longapproom (LP_ID, LP_RESONE, LP_RESTWO, 
+      LP_RESTHREE, LP_RESFOUR, LP_RESFIVE, 
+      LP_MEETIDS)
+    values (#{lpId,jdbcType=VARCHAR}, #{lpResone,jdbcType=VARCHAR}, #{lpRestwo,jdbcType=VARCHAR}, 
+      #{lpResthree,jdbcType=VARCHAR}, #{lpResfour,jdbcType=VARCHAR}, #{lpResfive,jdbcType=VARCHAR}, 
+      #{lpMeetids,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.aixu.meeting.domain.AikoLongapproom" >
+    insert into aiko_longapproom
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="lpId != null" >
+        LP_ID,
+      </if>
+      <if test="lpResone != null" >
+        LP_RESONE,
+      </if>
+      <if test="lpRestwo != null" >
+        LP_RESTWO,
+      </if>
+      <if test="lpResthree != null" >
+        LP_RESTHREE,
+      </if>
+      <if test="lpResfour != null" >
+        LP_RESFOUR,
+      </if>
+      <if test="lpResfive != null" >
+        LP_RESFIVE,
+      </if>
+      <if test="lpMeetids != null" >
+        LP_MEETIDS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="lpId != null" >
+        #{lpId,jdbcType=VARCHAR},
+      </if>
+      <if test="lpResone != null" >
+        #{lpResone,jdbcType=VARCHAR},
+      </if>
+      <if test="lpRestwo != null" >
+        #{lpRestwo,jdbcType=VARCHAR},
+      </if>
+      <if test="lpResthree != null" >
+        #{lpResthree,jdbcType=VARCHAR},
+      </if>
+      <if test="lpResfour != null" >
+        #{lpResfour,jdbcType=VARCHAR},
+      </if>
+      <if test="lpResfive != null" >
+        #{lpResfive,jdbcType=VARCHAR},
+      </if>
+      <if test="lpMeetids != null" >
+        #{lpMeetids,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.aixu.meeting.domain.AikoLongapproomExample" resultType="java.lang.Integer" >
+    select count(*) from aiko_longapproom
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update aiko_longapproom
+    <set >
+      <if test="record.lpId != null" >
+        LP_ID = #{record.lpId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lpResone != null" >
+        LP_RESONE = #{record.lpResone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lpRestwo != null" >
+        LP_RESTWO = #{record.lpRestwo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lpResthree != null" >
+        LP_RESTHREE = #{record.lpResthree,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lpResfour != null" >
+        LP_RESFOUR = #{record.lpResfour,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lpResfive != null" >
+        LP_RESFIVE = #{record.lpResfive,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lpMeetids != null" >
+        LP_MEETIDS = #{record.lpMeetids,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update aiko_longapproom
+    set LP_ID = #{record.lpId,jdbcType=VARCHAR},
+      LP_RESONE = #{record.lpResone,jdbcType=VARCHAR},
+      LP_RESTWO = #{record.lpRestwo,jdbcType=VARCHAR},
+      LP_RESTHREE = #{record.lpResthree,jdbcType=VARCHAR},
+      LP_RESFOUR = #{record.lpResfour,jdbcType=VARCHAR},
+      LP_RESFIVE = #{record.lpResfive,jdbcType=VARCHAR},
+      LP_MEETIDS = #{record.lpMeetids,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update aiko_longapproom
+    set LP_ID = #{record.lpId,jdbcType=VARCHAR},
+      LP_RESONE = #{record.lpResone,jdbcType=VARCHAR},
+      LP_RESTWO = #{record.lpRestwo,jdbcType=VARCHAR},
+      LP_RESTHREE = #{record.lpResthree,jdbcType=VARCHAR},
+      LP_RESFOUR = #{record.lpResfour,jdbcType=VARCHAR},
+      LP_RESFIVE = #{record.lpResfive,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aixu.meeting.domain.AikoLongapproom" >
+    update aiko_longapproom
+    <set >
+      <if test="lpResone != null" >
+        LP_RESONE = #{lpResone,jdbcType=VARCHAR},
+      </if>
+      <if test="lpRestwo != null" >
+        LP_RESTWO = #{lpRestwo,jdbcType=VARCHAR},
+      </if>
+      <if test="lpResthree != null" >
+        LP_RESTHREE = #{lpResthree,jdbcType=VARCHAR},
+      </if>
+      <if test="lpResfour != null" >
+        LP_RESFOUR = #{lpResfour,jdbcType=VARCHAR},
+      </if>
+      <if test="lpResfive != null" >
+        LP_RESFIVE = #{lpResfive,jdbcType=VARCHAR},
+      </if>
+      <if test="lpMeetids != null" >
+        LP_MEETIDS = #{lpMeetids,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where LP_ID = #{lpId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.aixu.meeting.domain.AikoLongapproom" >
+    update aiko_longapproom
+    set LP_RESONE = #{lpResone,jdbcType=VARCHAR},
+      LP_RESTWO = #{lpRestwo,jdbcType=VARCHAR},
+      LP_RESTHREE = #{lpResthree,jdbcType=VARCHAR},
+      LP_RESFOUR = #{lpResfour,jdbcType=VARCHAR},
+      LP_RESFIVE = #{lpResfive,jdbcType=VARCHAR},
+      LP_MEETIDS = #{lpMeetids,jdbcType=LONGVARCHAR}
+    where LP_ID = #{lpId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aixu.meeting.domain.AikoLongapproom" >
+    update aiko_longapproom
+    set LP_RESONE = #{lpResone,jdbcType=VARCHAR},
+      LP_RESTWO = #{lpRestwo,jdbcType=VARCHAR},
+      LP_RESTHREE = #{lpResthree,jdbcType=VARCHAR},
+      LP_RESFOUR = #{lpResfour,jdbcType=VARCHAR},
+      LP_RESFIVE = #{lpResfive,jdbcType=VARCHAR}
+    where LP_ID = #{lpId,jdbcType=VARCHAR}
+  </update>
+</mapper>

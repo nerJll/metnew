@@ -76,6 +76,16 @@ public class MeetService {
 		meet.setApplyEmpName(userService.getUserByNo(meet.getApplyEmpNo()).getName());
 		meetDAO.insertSelective(meet);
 	}
+	
+	@Transactional
+	public void saveMeet1(AixuMeeting meet, String id) {
+		// 赋初值
+		meet.setMeetId(id);
+		meet.setMeetCreateTime(new Date());
+		meet.setMeetState("已取消");
+		meet.setApplyEmpName(userService.getUserByNo(meet.getApplyEmpNo()).getName());
+		meetDAO.insertSelective(meet);
+	}
 
 	/**
 	 * 条件查询会议

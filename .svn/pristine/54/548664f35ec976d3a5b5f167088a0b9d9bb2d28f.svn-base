@@ -62,7 +62,7 @@
 						<#if user.name==userName>
 							<option value="${userId}" selected>${userName}</option>
 						<#else>
-							<option value="${user.userid}">${user.name}（${user.deptName}）</option>
+							<option value="${user.userid}">${user.name}</option>
 						</#if>
 						</#list>
 					</select> <br>

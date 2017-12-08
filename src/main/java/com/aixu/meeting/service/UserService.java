@@ -23,52 +23,55 @@ import com.github.pagehelper.PageInfo;
 
 @Service
 public class UserService {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-	
+
 	@Autowired
 	private AikoUserMapper userDAO;
-	
+
 	@Autowired
 	private AikoDeptMapper deptDAO;
-	
+
 	@Autowired
 	private AikoRecepempMapper recepempDAO;
-	
-	public List<AikoUser> listAllUser () {
+
+	public List<AikoUser> listAllUser() {
 		AikoUserExample example = new AikoUserExample();
 		example.createCriteria().andStatusEqualTo(1);
 		List<AikoUser> alUser = userDAO.selectByExample(example);
 		System.out.println(alUser.size());
 		for (AikoUser aikoUser : alUser) {
 			AikoDept dept = deptDAO.selectByPrimaryKey(aikoUser.getDeptid());
-			if(dept == null){
-				dept = new AikoDept("23", "23", "23", "23", "23", "23", "23",
-						new Date(), "23", new Date(), "23", 23, "23");
-				
+			if (dept == null) {
+				dept = new AikoDept("23", "23", "23", "23", "23", "23", "23", new Date(), "23", new Date(), "23", 23,
+						"23");
+
 			}
-			aikoUser.setDeptName(dept.getName()==null?"":dept.getName());
+			aikoUser.setDeptName(dept.getName() == null ? "" : dept.getName());
 		}
 		return alUser;
 	}
-	
+
 	/**
 	 * 根据工号查询员工
+	 * 
 	 * @param no
 	 * @return
 	 */
 	public AikoUser getUserByNo(String no) {
-		System.out.println(no);
+		//System.out.println(no);
 		AikoUserExample example = new AikoUserExample();
 		example.createCriteria().andUseridEqualTo(no);
 		AikoUser aikoUser = userDAO.selectByExample(example).get(0);
 		AikoDept dept = deptDAO.selectByPrimaryKey(aikoUser.getDeptid());
-		aikoUser.setDeptName(dept.getName());;
+		aikoUser.setDeptName(dept.getName());
+		;
 		return aikoUser;
 	}
-	
+
 	/**
 	 * 根据部门编号查询员工
+	 * 
 	 * @param deptId
 	 * @return
 	 */
@@ -78,10 +81,12 @@ public class UserService {
 		List<AikoUser> userByDept = userDAO.selectByExample(example);
 		return userByDept;
 	}
-	
+
 	/**
 	 * 模糊查询
-	 * @param keyWord 关键字
+	 * 
+	 * @param keyWord
+	 *            关键字
 	 * @return 用户列表
 	 */
 	public List<AikoUser> listUserLikeKeyWord(String keyWord) {
@@ -90,7 +95,7 @@ public class UserService {
 		List<AikoUser> userList = userDAO.selectByExample(example);
 		return userList;
 	}
-	
+
 	/**
 	 * @return in内部的工号员工
 	 */
@@ -105,13 +110,13 @@ public class UserService {
 	 * @return
 	 */
 	public PageInfo<?> getAllRecepemps(int currentPage, int pageSize) {
-		PageHelper.startPage(currentPage,pageSize);
+		PageHelper.startPage(currentPage, pageSize);
 		List<AikoRecepemp> repemps = recepempDAO.selectByExample(new AikoRecepempExample());
 		return new PageInfo<AikoRecepemp>(repemps);
 	}
 
 	/**
-	 * @desc	新增前台人员
+	 * @desc 新增前台人员
 	 * @param aikoRecepemp
 	 */
 	public void addRempEmp(AikoRecepemp aikoRecepemp) {
@@ -119,9 +124,9 @@ public class UserService {
 		aikoRecepemp.setRempId(rempId);
 		recepempDAO.insert(aikoRecepemp);
 	}
-	
+
 	/**
-	 * @desc	根据所属返回前台人员
+	 * @desc 根据所属返回前台人员
 	 * @param empFrom
 	 * @return
 	 */
@@ -131,4 +136,3 @@ public class UserService {
 		return recepempDAO.selectByExample(exp);
 	}
 }
- 

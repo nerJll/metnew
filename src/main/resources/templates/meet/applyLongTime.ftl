@@ -3,18 +3,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="renderer" content="webkit">   
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>长期预订</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>预定界面</title>
 <link rel="icon" type="image/png" href="${ctx}/images/favicon.png">
 <link rel="stylesheet" type="text/css" href="${ctx}/css/amazeui.min.css">
 <link rel="stylesheet" type="text/css" href="${ctx}/css/amazeui.chosen.css" />
 <link rel="stylesheet" type="text/css" href="${ctx}/css/order-base.css">
-<script type="text/javascript" src="${ctx}/js/jquery/jquery-2.1.1.min.js"></script>
-<script type="text/javascript" src="${ctx}/js/new-ui/amazeui.min.js"></script>
-<script type="text/javascript" src="${ctx}/js/new-ui/amazeui.chosen.min.js"></script>
-<script type="text/javascript" src="${ctx}/js/common/order-common.js"></script>
 <style type="text/css">
 .mask {
 	position: absolute;
@@ -46,7 +42,7 @@
 	</header>
 	<div class="am-container">
 		<form class="am-form am-form-horizontal" id="myform" method="post"
-			action="${ctx}/meet/save-meet" onsubmit="submitForm()">
+			action="${ctx}/common/save-LongApply" onsubmit="submitForm()">
 			<hr>
 			<!-- 预定人 -->
 			<input type='hidden' name='resFour' value='${userName}'/>
@@ -96,6 +92,25 @@
 					type="hidden" name="endTime" value="${endTime}">
 				<div class="am-u-sm-9">
 					<span>${staTime} ~ ${endTime}</span>
+					<div id='sbcwb'>
+					
+					</div>
+				</div>
+			</div>
+			<!--循环-->
+			<div class="am-form-group">
+				<label for="meetEmpNum"
+					class="am-u-sm-3 am-form-label am-icon-clock-o">&nbsp;&nbsp;周期</label>
+				<input type="hidden" name="staTime" value="${staTime}"> <input
+					type="hidden" name="endTime" value="${endTime}">
+				<div class="am-u-sm-9">
+					持续类型：<select name="loopType" class="am-input-sm" required>
+							<option value=""></option>
+							<option value="日循环">每天</option>
+							<option value="周循环">每周</option>
+						</select>
+					持续次数：<select name="loopTimes" class="am-input-sm" required>
+						</select>
 				</div>
 			</div>
 			<!--会议类型-->
@@ -236,5 +251,112 @@
 	 </form>
 	</div>
 	<div id="mask" class="mask"></div>
+
+	<script type="text/javascript"
+		src="${ctx}/js/jquery/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="${ctx}/js/new-ui/amazeui.min.js"></script>
+	<script type="text/javascript" src="${ctx}/js/new-ui/amazeui.chosen.min.js"></script>
+	<script type="text/javascript" src="${ctx}/js/common/order-common.js"></script>
+	<script>
+		$(function(){
+			var h1 = '<option value=""></option>'
+					+'<option value="2">2天</option>'
+					+'<option value="3">3天</option>'
+					+'<option value="4">4天</option>'
+					+'<option value="5">5天</option>'
+					+'<option value="6">6天</option>'
+					+'<option value="7">7天</option>'
+					+'<option value="8">8天</option>'
+					+'<option value="9">9天</option>'
+					+'<option value="10">10天</option>'
+					+'<option value="11">11天</option>'
+					+'<option value="12">12天</option>'
+					+'<option value="13">13天</option>'
+					+'<option value="14">14天</option>'
+					
+			var h2 = '<option value=""></option>'
+					+'<option value="2">2周</option>'
+					+'<option value="3">3周</option>'
+					+'<option value="4">4周</option>'
+			$('select[name=loopType]').change(function(){
+				var zhi = $('select[name=loopType]').find('option:selected').val()
+				if(zhi=='日循环'){
+					$('select[name=loopTimes]').empty().append(h1)
+					$('#sbcwb').empty()
+				}else if(zhi=='周循环'){
+					$('select[name=loopTimes]').empty().append(h2)
+					$('#sbcwb').empty()
+				}
+				//console.log($('select[name=loopTimes]').append()
+			})
+			$('select[name=loopTimes]').change(function(){
+				var sta = '${staTime}'
+				var eta = '${endTime}'
+				var loopType = $('select[name=loopType]').find('option:selected').val()
+				var loopTimes = $('select[name=loopTimes]').find('option:selected').val()
+				var html = getDateTime(loopType,loopTimes,sta,eta)
+				$('#sbcwb').empty().append(html)
+			})
+		})
+		
+		//返回一个时间段之后的日期
+		function getDateTime(loopType,loopTimes,staTime,endTime){
+			var sta1 = new Date(Date.parse(staTime.replace(/-/g,'/'))).getTime()		
+			var sta2 = new Date(Date.parse(endTime.replace(/-/g,'/'))).getTime()
+			var html = ''
+			if(loopType=='日循环'){
+				for(var i=1; i<loopTimes; i++){
+					var sta3 = sta1+86400000*i
+					var sta5 = sta2+86400000*i
+					var sta4 = formatDate(sta3)
+					var sta6 = formatDate(sta5)
+					html += 
+						'<input type="hidden" name="staTime" value="'+sta4+'">'
+						+'<input type="hidden" name="endTime" value="'+sta6+'">'
+						+sta4+' ~ '+sta6+'<br>'
+				}
+				
+			}else if(loopType=='周循环'){
+				for(var i=1; i<loopTimes; i++){
+					var sta3 = sta1+86400000*i*7
+					var sta5 = sta2+86400000*i*7
+					var sta4 = formatDate(sta3)
+					var sta6 = formatDate(sta5)
+					html += '<input type="hidden" name="staTime" value="'+sta4+'">'
+					+'<input type="hidden" name="endTime" value="'+sta6+'">'
+					+sta4+' ~ '+sta6+'<br>'
+					
+				}
+			}
+			return html
+		}
+		//日期转换工具
+		Date.prototype.format = function (format) // author: meizz
+		{
+		    var o = {
+		        "M+": this.getMonth() + 1, // month
+		        "d+": this.getDate(),    // day
+		        "h+": this.getHours(),   // hour
+		        "m+": this.getMinutes(), // minute
+		        "s+": this.getSeconds(), // second
+		        "q+": Math.floor((this.getMonth() + 3) / 3),  // quarter
+		        "S": this.getMilliseconds() // millisecond
+		    };
+		    if (/(y+)/.test(format))
+		        format = format.replace(RegExp.$1,
+		                (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+		    for (var k in o)
+		        if (new RegExp("(" + k + ")").test(format))
+		            format = format.replace(RegExp.$1,
+		                    RegExp.$1.length == 1 ? o[k] :
+		                        ("00" + o[k]).substr(("" + o[k]).length));
+		    return format;
+		};
+		//格式化日期
+		function formatDate(value){
+		    var unixTimestamp = new Date(value);  
+		    return unixTimestamp.format("yyyy-MM-dd hh:mm:ss"); 
+		}
+	</script>
 </body>
 </html>

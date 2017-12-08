@@ -62,7 +62,7 @@ var dkmi = ''
 		
 		//遮盖未开放的会议室div层
 		//$.messager.alert("",checkTime(x1,new Date()))
-		$("#metdate").datebox().datebox('calendar').calendar({ validator:function(day){ return (day > new Date()-86400000)&&(new Date() > day-86400000*14); } })
+		$("#metdate").datebox().datebox('calendar').calendar({ validator:function(day){ return (day > new Date()-86400000)&&(new Date() > day-86400000*7); } })
 		
 		$('#metdate').datebox('textbox').css('background','#F7F7F7')
 		$('#statime').combobox('textbox').css('background','#F7F7F7')
@@ -70,7 +70,6 @@ var dkmi = ''
 		
 		//$('#myApp').linkbutton('disable')
 		$('#appMeet').linkbutton('disable')
-		$('#appMeet1').linkbutton('disable')
 		
 		//alert(romi+'--'+dkmi)
 		
@@ -239,7 +238,6 @@ var dkmi = ''
 				$("#aixu_1"+ "d").hide() */
 			}
 			$('#appMeet').linkbutton('enable')	//打开预订按钮
-			$('#appMeet1').linkbutton('enable')	//打开预订按钮
 			$.ajax({
 				url:'${ctx}/meet/list-meet',
 				type:'post',
@@ -464,60 +462,6 @@ var dkmi = ''
 	function myApplyMeet(){
 		window.open('${ctx}/meet/showMyApply')
 	}
-	//预订长期
-	function applyMeet1(){
-		var st = $('#metdate').datebox('getValue')+' '+$("#statime").val()+':00'
-		var et = $('#metdate').datebox('getValue')+' '+$("#endtime").val()+':00'
-		/* getKysphm(st,et)		//视频会议号
-		getKysphyss(st,et) */
-		var am = $("input:radio[name='audiomeet']:checked").val()
-		var rom = romi.substring(0,romi.length-1)
-		var dmi = dkmi.substring(0,dkmi.length-1)
-		if(dmi!='' && rom!==''){
-			rom += ',' + dmi
-		}else if(rom == ''){
-			rom = dmi
-		}
-		var roms = rom.split(',')
-		console.log(roms.length)
-		if ($('#metdate').datebox('getValue')==''||st == "" || et == "") {
-			$.messager.alert("消息提示", "${ctx}" + "请选择完整的会议时间")
-		} else if(!checkTime(st,new Date())||!checkTime(et.replace(/-/g,'/'),new Date())){
-			$.messager.alert('消息提示','会议时间不能是过去时')
-		}else if(checkTime(st,et.replace(/-/g,'/'))){
-			$.messager.alert('消息提示','会议开始时间不能大于结束时间')
-		}else if(rom==''&&dmi==''){
-			$.messager.alert('消息提示','请选择会议室')
-		} else if(am==''||am==null){
-			$.messager.alert('消息提示','请选择会议类型')
-		}else if(am=='视频会议'){
-			$.messager.alert('消息提示','长期预订仅支持普通会议')
-		}/* else if(am=='视频会议' && (rom.indexOf('aiko_2')!=-1 || rom.indexOf('aiko_4')!=-1 || rom.indexOf('aiko_12')!=-1)){
-			$.messager.alert('消息提示','普通会议室不支持视频会议，请检查选择！')
-		}else if(am=='普通会议' && rom.indexOf('dk')>=0 ){
-			$.messager.alert('消息提示','虚拟终端不支持普通会议，请检查选择！')
-		}else if(am=='视频会议' && kysph==0){
-			$.messager.alert('消息提示','该时间段视频会议预订已达上限，请换个时间段吧')
-		}else if(am=='视频会议' && roms.length+kysphyss>10){
-			$.messager.alert('消息提示','该时间段视频会议室预订已达上限，请减少会议室数或换个时间段吧')
-		} */else {
-			//$.messager.alert("消息提示", "开始时间：" + st + "<br>结束时间：" + et + "<br>会议类型：" + am + "<br>会议室：" + rom )
-			//openPostWindow('${ctx}/room/order-page', st,et,am,rom)
-			$.messager.progress({ 
-		       title: '提示', 
-		       msg: '数据提交中，请稍候……', 
-		    })
-			//window.location.href='${ctx}/room/order-page?staTime='+st+'&&endTime='+et+'&&state='+am+'&&rooms='+rom
-			//模拟表单提交
-		    var url = "${ctx}/common/applyLongTime"
-			var form = $("<form></form>").attr("action", url).attr("method", "post")
-			form.append($("<input></input>").attr("type", "hidden").attr("name", "staTime").attr("value", st))
-			form.append($("<input></input>").attr("type", "hidden").attr("name", "endTime").attr("value", et))
-			form.append($("<input></input>").attr("type", "hidden").attr("name", "state").attr("value", am))
-			form.append($("<input></input>").attr("type", "hidden").attr("name", "rooms").attr("value", rom))
-			form.appendTo('body').submit().remove();
-		}
-	}
 </script>
 </head>
 <body class="easyui-layout,fit:true">
@@ -535,10 +479,7 @@ var dkmi = ''
 							data-options="editable:false,panelHeight:250"
 							class="easyui-combobox" id="statime">
 								<option value=""> </option>
-							<option value="08:30">08:30</option><option value="08:45">08:45</option>
-							<option value="09:00">09:00</option><option value="09:15">09:15</option>
-							<option value="09:30">09:30</option><option value="09:45">09:45</option>
-							<option value="10:00">10:00</option><option value="10:15">10:15</option>
+							<option value="08:30">08:30</option><option value="08:45">08:45</option><option value="09:00">09:00</option><option value="09:15">09:15</option><option value="09:30">09:30</option><option value="09:45">09:45</option><option value="10:00">10:00</option>
 							<option value="10:30">10:30</option><option value="10:45">10:45</option><option value="11:00">11:00</option><option value="11:15">11:15</option><option value="11:30">11:30</option><option value="11:45">11:45</option><option value="12:00">12:00</option>
 							<option value="12:15">12:15</option><option value="12:30">12:30</option><option value="12:45">12:45</option><option value="13:00">13:00</option><option value="13:15">13:15</option><option value="13:30">13:30</option><option value="13:45">13:45</option>
 							<option value="14:00">14:00</option><option value="14:15">14:15</option><option value="14:30">14:30</option><option value="14:45">14:45</option><option value="15:00">15:00</option><option value="15:15">15:15</option><option value="15:30">15:30</option>
@@ -565,7 +506,7 @@ var dkmi = ''
 							<option value="08:30">08:30</option><option value="08:45">08:45</option>
 							<option value="09:00">09:00</option><option value="09:15">09:15</option>
 							<option value="09:30">09:30</option><option value="09:45">09:45</option>
-							<option value="10:00">10:00</option><option value="10:15">10:15</option>
+							<option value="10:00">10:00</option>
 							<option value="10:30">10:30</option><option value="10:45">10:45</option>
 							<option value="11:00">11:00</option><option value="11:15">11:15</option>
 							<option value="11:30">11:30</option><option value="11:45">11:45</option>
@@ -603,8 +544,8 @@ var dkmi = ''
 				<span><a style="width: 80px; height: 40px; font-weight:bold; color: white;"
 							id="appMeet" onclick="applyMeet()" class="easyui-linkbutton"
 							data-options="iconCls:'icon-add',plain:true">提交</a></span>
-				<span><a style="width: 80px; height: 40px; font-weight:bold; color: red;"
-							id="appMeet1" onclick="applyMeet1()" class="easyui-linkbutton"
+				<span><a style="width: 80px; height: 40px; font-weight:bold; color: white;"
+							id="appMeet1" onclick="applyMeet()" class="easyui-linkbutton"
 							data-options="iconCls:'icon-add',plain:true">长期预订</a></span>
 				
 				<!-- <span><a style="width: 90px; height: 40px; 

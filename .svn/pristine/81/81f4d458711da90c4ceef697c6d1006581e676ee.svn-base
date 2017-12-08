@@ -44,7 +44,7 @@ public class MeetController {
 
 	@Autowired
 	private AixuAudioinfoMapper aaiMapper;
-
+	
 	@Autowired
 	private UserService userService;
 
@@ -55,9 +55,11 @@ public class MeetController {
 	 * @return
 	 */
 	@RequestMapping("/showOneMeetInfo")
-	public String showOneMeetInfo(@RequestParam("meetId") String meetId, HttpServletResponse res, Model model) {
-		// 判断是否登陆
-		// checkIfLogin(res);
+	public String showOneMeetInfo(@RequestParam("meetId") String meetId,
+			HttpServletResponse res,
+			Model model) {
+		//判断是否登陆
+		checkIfLogin(res);
 		AixuMeeting meet = meetService.getMeetById(meetId);
 		List<AixuMeetandroom> amrs = meetAndRoomService.getMeetRoomByMeetId(meetId);
 		for (int i = 0; i < amrs.size(); i++) {
@@ -65,7 +67,7 @@ public class MeetController {
 		}
 		model.addAttribute("meet", meet);
 		model.addAttribute("amrs", amrs);
-		return "meet/showOneMeetInfo";
+		return "meet/showOneMeetInfo"; 
 	}
 
 	/**
@@ -78,11 +80,11 @@ public class MeetController {
 			@RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize,
 			@RequestParam(name = "applyOrTheme", required = false, defaultValue = "") String applyOrTheme,
 			HttpServletResponse res, Model model) throws IOException {
-		// 判断是否登陆
-		// checkIfLogin(res);
+		//判断是否登陆
+		checkIfLogin(res);
 		// 获取当前登陆信息（工号）
-		// String gh = (String) SystemApi.getCurrentUser().get("userid");
-		String gh = "1016087";
+		String gh = (String) SystemApi.getCurrentUser().get("userid");
+		//String gh = "1016087";
 		PageInfo<AixuMeeting> meets = meetService.showMyApply(currentPage, pageSize, gh, applyOrTheme);
 		model.addAttribute("meets", meets);
 		return "meet/showPersonalApply";
@@ -94,36 +96,35 @@ public class MeetController {
 	 * @return
 	 */
 	@GetMapping("/cancelMeet")
-	public String cancelMeet(@RequestParam("meetId") String meetId, HttpServletResponse res) {
-		// 判断是否登陆
-		// checkIfLogin(res);
+	public String cancelMeet(@RequestParam("meetId") String meetId,
+			HttpServletResponse res) {
+		//判断是否登陆
+		checkIfLogin(res);
 		try {
 			String cancelInfo = meetService.cancelMeet(meetId); // 取消信息
 			List<AixuMeetandroom> mrs = meetAndRoomService.getMeetRoomByMeetId(meetId);
 			for (AixuMeetandroom aixuMeetandroom : mrs) {
 				String hys = roomService.getRoomById(aixuMeetandroom.getRoomId()).getMeetRoomName();
-				String hysmc = "会议室：" + hys;
+				String hysmc = "会议室：" + hys + "\n";
 				String[] empNos = aixuMeetandroom.getPersonNo().split(" ");
 				for (String empNo : empNos) {
 					System.out.println(empNo + cancelInfo + hysmc);
-					// WeChatUtil.weChatPush(empNo, cancelInfo + hysmc); // 消息推送
+					WeChatUtil.weChatPush(empNo, cancelInfo + hysmc); // 消息推送
 				}
-				// 推送前台人员
+				//推送前台人员
 				String userID = (String) SystemApi.getCurrentUser().get("userid");
-				String depm = "部门：" + userService.getUserByNo(userID).getDeptName() + "\n";
+				String depm = "部门："+userService.getUserByNo(userID).getDeptName()+"\n";
 				List<AikoRecepemp> gdaxRecEmps = userService.getRempEmpByFrom("广东爱旭");
 				List<AikoRecepemp> zjaxRecEmps = userService.getRempEmpByFrom("浙江爱旭");
-				if (hys.indexOf("广东") >= 0) {
+				if(hys.indexOf("广东") >= 0) {
 					for (AikoRecepemp aikoRecepemp : gdaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + cancelInfo + hysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), cancelInfo + hysmc+ depm);
-						// // 消息推送
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + cancelInfo + hysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), cancelInfo + hysmc+ depm); // 消息推送
 					}
-				} else if (hys.indexOf("浙江") >= 0) {
+				}else if(hys.indexOf("浙江") >= 0){
 					for (AikoRecepemp aikoRecepemp : zjaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + cancelInfo + hysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), cancelInfo + hysmc + depm);
-						// // 消息推送
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + cancelInfo + hysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), cancelInfo + hysmc + depm); // 消息推送
 					}
 				}
 			}
@@ -143,10 +144,11 @@ public class MeetController {
 	 */
 	@GetMapping("/getFreeRoomsAndDks")
 	@ResponseBody
-	public int getFreeRoomsAndDks(@RequestParam("staTime") String staTime, @RequestParam("endTime") String endTime,
+	public int getFreeRoomsAndDks(@RequestParam("staTime") String staTime, 
+			@RequestParam("endTime") String endTime,
 			HttpServletResponse res) {
-		// 判断是否登陆
-		// checkIfLogin(res);
+		//判断是否登陆
+		checkIfLogin(res);
 		return meetService.getFreeRoomsAndDks(staTime, endTime);
 	}
 
@@ -158,10 +160,11 @@ public class MeetController {
 	 */
 	@GetMapping("/getAudioInfo")
 	@ResponseBody
-	public int getAudioInfo(@RequestParam("staTime") String staTime, @RequestParam("endTime") String endTime,
+	public int getAudioInfo(@RequestParam("staTime") String staTime,
+			@RequestParam("endTime") String endTime,
 			HttpServletResponse res) {
-		// 判断是否登陆
-		// checkIfLogin(res);
+		//判断是否登陆
+		checkIfLogin(res);
 		return (meetService.getKysphys(staTime, endTime));
 	}
 
@@ -176,11 +179,11 @@ public class MeetController {
 	@RequestMapping("/save-meet")
 	public String saveMeet(AixuMeeting meet, HttpServletRequest req, HttpServletResponse res, Model model)
 			throws IOException {
-		// 判断是否登陆
-		// checkIfLogin(res);
+		//判断是否登陆
+		checkIfLogin(res);
 		// 获取当前登陆人工号
-		// String userID = (String) SystemApi.getCurrentUser().get("userid");
-		String userID = "1016087";
+		String userID = (String) SystemApi.getCurrentUser().get("userid");
+		//String userID = "1016087";
 		meet.setResOne(userID);
 
 		List<AixuMeetingroom> roomes = meetService.listMeetByTime(DateUtil.getDateTimeFormat(meet.getStaTime()),
@@ -218,7 +221,6 @@ public class MeetController {
 			String gyxx = "会议信息\n";
 			String fqr = "发起人：" + meet.getApplyEmpName() + "\n";
 			String hyzt = "主题：" + meet.getMeetTheme() + "\n";
-			String hyyc = "议程：" + meet.getResFive() + "\n";
 			String sta = "开始时间：" + DateUtil.getDateFormat(meet.getStaTime(), "yyyy-MM-dd HH:mm") + "\n";
 			String end = "结束时间：" + DateUtil.getDateFormat(meet.getEndTime(), "yyyy-MM-dd HH:mm") + "\n";
 			String chryxm = "参会人员：";
@@ -236,29 +238,27 @@ public class MeetController {
 				bhysxm += aixuMeetandroom.getPersonNames();
 				String[] personNos = aixuMeetandroom.getPersonNo().split(" ");
 				for (String no : personNos) {
-					System.out.println(
-							"发送数据：\n" + no + gyxx + fqr + hyzt + hyyc + sta + end + chryxm + syss + bhysmc + bhysxm);
-					// WeChatUtil.weChatPush(no, (gyxx + fqr + hyzt + sta + end + chryxm + syss +
-					// bhysmc + bhysxm));
+					WeChatUtil.weChatPush(no, (gyxx + fqr + hyzt + sta + end + chryxm + syss +
+					bhysmc + bhysxm));
 				}
-				// 推送前台人员
-				String depm = "部门：" + userService.getUserByNo(userID).getDeptName() + "\n";
+				//推送前台人员
+				String depm = "部门："+userService.getUserByNo(userID).getDeptName()+"\n";
 				List<AikoRecepemp> gdaxRecEmps = userService.getRempEmpByFrom("广东爱旭");
 				List<AikoRecepemp> zjaxRecEmps = userService.getRempEmpByFrom("浙江爱旭");
 				String hys = roomService.getRoomById(aixuMeetandroom.getRoomId()).getMeetRoomName();
-				if (hys.indexOf("广东") >= 0) {
+				if(hys.indexOf("广东") >= 0) {
 					for (AikoRecepemp aikoRecepemp : gdaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + gyxx + fqr + hyzt + hyyc + sta + end
-								+ bhysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt +
-						// sta + end + bhysmc + depm); // 消息推送
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + gyxx + fqr + 
+								hyzt + sta + end + bhysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt + 
+								sta + end + bhysmc + depm); // 消息推送
 					}
-				} else if (hys.indexOf("浙江") >= 0) {
+				}else if(hys.indexOf("浙江") >= 0){
 					for (AikoRecepemp aikoRecepemp : zjaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + gyxx + fqr + hyzt + hyyc + sta + end
-								+ bhysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt +
-						// sta + end + bhysmc + depm); // 消息推送
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + gyxx + fqr + 
+								hyzt + sta + end + bhysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt + 
+								sta + end + bhysmc + depm); // 消息推送
 					}
 				}
 				bhysmc = "会议室:";
@@ -275,7 +275,6 @@ public class MeetController {
 			sb.append("会议信息\n");
 			sb.append("发起人：" + meet.getApplyEmpName() + "\n");
 			sb.append("主题：" + meet.getMeetTheme() + "\n");
-			sb.append("议程：" + meet.getResFive() + "\n");
 			sb.append("开始时间：" + DateUtil.getDateFormat(meet.getStaTime(), "yyyy-MM-dd HH:mm") + "\n");
 			sb.append("结束时间：" + DateUtil.getDateFormat(meet.getEndTime(), "yyyy-MM-dd HH:mm") + "\n");
 			String recempInfo = sb.toString();
@@ -310,28 +309,26 @@ public class MeetController {
 					// System.out.println("发送数据" + s + "\n" + sb + hysmc + bhysry + dlzh + dlmm);
 					if (hysmc.indexOf("00") == -1) { // 不是虚拟端口
 						System.out.println("发送数据" + s + "\n" + sb + sphyh + sphymm + hysmc + bhysry);
-						// WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry);
+						WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry);
 					} else {
 						System.out.println("发送数据" + s + "\n" + sb + sphyh + sphymm + hysmc + bhysry + dlzh + dlmm);
-						// WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry + dlzh + dlmm);
+						WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry + dlzh + dlmm);
 					}
 				}
-				// 推送前台人员
-				String depm = "部门：" + userService.getUserByNo(userID).getDeptName() + "\n";
+				//推送前台人员
+				String depm = "部门："+userService.getUserByNo(userID).getDeptName()+"\n";
 				List<AikoRecepemp> gdaxRecEmps = userService.getRempEmpByFrom("广东爱旭");
 				List<AikoRecepemp> zjaxRecEmps = userService.getRempEmpByFrom("浙江爱旭");
 				String hys = roomService.getRoomById(amd.getRoomId()).getMeetRoomName();
-				if (hys.indexOf("广东") >= 0) {
+				if(hys.indexOf("广东") >= 0) {
 					for (AikoRecepemp aikoRecepemp : gdaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm);
-						// // 消息推送
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm); // 消息推送
 					}
-				} else if (hys.indexOf("浙江") >= 0) {
+				}else if(hys.indexOf("浙江") >= 0){
 					for (AikoRecepemp aikoRecepemp : zjaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm);
-						// // 消息推送
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm); // 消息推送
 					}
 				}
 			}
@@ -360,16 +357,17 @@ public class MeetController {
 	@RequestMapping("list-meet")
 	@ResponseBody
 	public List<AixuMeetingroom> listMeet(@RequestParam(name = "staTime") String staTime,
-			@RequestParam(name = "endTime") String endTime, HttpServletResponse res) {
-		// 判断是否登陆
-		// checkIfLogin(res);
+			@RequestParam(name = "endTime") String endTime,
+			HttpServletResponse res) {
+		//判断是否登陆
+		checkIfLogin(res);
 		return meetService.listMeetByTime(staTime, endTime);
 	}
 
 	@GetMapping("/index")
 	public String index(HttpServletResponse res) {
-		// 判断是否登陆
-		// checkIfLogin(res);
+		//判断是否登陆
+		checkIfLogin(res);
 		return "meet/index";
 	}
 
@@ -377,9 +375,10 @@ public class MeetController {
 	@ResponseBody
 	public List<?> listNoneRoom(@RequestParam(name = "roomIds", required = false) String roomIds,
 			HttpServletRequest req, @RequestParam(name = "staTime", required = false) String staTime,
-			@RequestParam(name = "endTime", required = false) String endTime, HttpServletResponse res) {
-		// 判断是否登陆
-		// checkIfLogin(res);
+			@RequestParam(name = "endTime", required = false) String endTime,
+			HttpServletResponse res) {
+		//判断是否登陆
+		checkIfLogin(res);
 		List<AixuMeetingroom> rooms = meetService.listMeetByTime(staTime, endTime);
 		// System.out.println(rooms.size());
 		List<String> conflictRooms = new ArrayList<String>();
@@ -404,7 +403,7 @@ public class MeetController {
 	 */
 	@RequestMapping("/checkAndSaveMeet")
 	public String checkAndSaveMeet(AixuMeeting meet, HttpServletRequest req, HttpServletResponse res, Model model) {
-		// 判断是否登陆
+		//判断是否登陆
 		checkIfLogin(res);
 		// 获取当前登陆人工号
 		String userID = (String) SystemApi.getCurrentUser().get("userid");
@@ -452,7 +451,6 @@ public class MeetController {
 			String gyxx = "会议信息\n";
 			String fqr = "发起人：" + meet.getApplyEmpName() + "\n";
 			String hyzt = "主题：" + meet.getMeetTheme() + "\n";
-			String hyyc = "议程：" + meet.getResFive() + "\n";
 			String sta = "开始时间：" + DateUtil.getDateFormat(meet.getStaTime(), "yyyy-MM-dd HH:mm") + "\n";
 			String end = "结束时间：" + DateUtil.getDateFormat(meet.getEndTime(), "yyyy-MM-dd HH:mm") + "\n";
 			String chryxm = "参会人员：";
@@ -470,26 +468,26 @@ public class MeetController {
 				bhysxm += aixuMeetandroom.getPersonNames();
 				String[] personNos = aixuMeetandroom.getPersonNo().split(" ");
 				for (String no : personNos) {
-					WeChatUtil.weChatPush(no, (gyxx + fqr + hyzt + hyyc + sta + end + chryxm + syss + bhysmc + bhysxm));
+					WeChatUtil.weChatPush(no, (gyxx + fqr + hyzt + sta + end + chryxm + syss + bhysmc + bhysxm));
 				}
-				// 推送前台人员
-				String depm = "部门：" + userService.getUserByNo(userID).getDeptName() + "\n";
+				//推送前台人员
+				String depm = "部门："+userService.getUserByNo(userID).getDeptName()+"\n";
 				List<AikoRecepemp> gdaxRecEmps = userService.getRempEmpByFrom("广东爱旭");
 				List<AikoRecepemp> zjaxRecEmps = userService.getRempEmpByFrom("浙江爱旭");
 				String hys = roomService.getRoomById(aixuMeetandroom.getRoomId()).getMeetRoomName();
-				if (hys.indexOf("广东") >= 0) {
+				if(hys.indexOf("广东") >= 0) {
 					for (AikoRecepemp aikoRecepemp : gdaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + gyxx + fqr + hyzt + hyyc + sta + end
-								+ bhysmc + depm);
-						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(),
-								gyxx + fqr + hyzt + hyyc + sta + end + bhysmc + depm); // 消息推送
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + gyxx + fqr + 
+								hyzt + sta + end +bhysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt + 
+								sta + end +bhysmc + depm); // 消息推送
 					}
-				} else if (hys.indexOf("浙江") >= 0) {
+				}else if(hys.indexOf("浙江") >= 0){
 					for (AikoRecepemp aikoRecepemp : zjaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + gyxx + fqr + hyzt + hyyc + sta + end
-								+ bhysmc + depm);
-						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(),
-								gyxx + fqr + hyzt + hyyc + sta + end + bhysmc + depm); // 消息推送
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + gyxx + fqr + 
+								hyzt + sta + end +bhysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt + 
+								sta + end +bhysmc + depm); // 消息推送
 					}
 				}
 				bhysmc = "会议室:";
@@ -506,10 +504,9 @@ public class MeetController {
 			sb.append("会议信息\n");
 			sb.append("发起人：" + meet.getApplyEmpName() + "\n");
 			sb.append("主题：" + meet.getMeetTheme() + "\n");
-			sb.append("议程：" + meet.getResFive() + "\n");
 			sb.append("开始时间：" + DateUtil.getDateFormat(meet.getStaTime(), "yyyy-MM-dd HH:mm") + "\n");
 			sb.append("结束时间：" + DateUtil.getDateFormat(meet.getEndTime(), "yyyy-MM-dd HH:mm") + "\n");
-			String recempInfo = sb.toString();
+			String recempInfo = sb.toString(); 
 			sb.append("参会人员：");
 			for (AixuMeetandroom aixuMeetandroom : mars) {
 				sb.append(aixuMeetandroom.getPersonNames() + " ");
@@ -547,19 +544,19 @@ public class MeetController {
 						WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry + dlzh + dlmm);
 					}
 				}
-				// 推送前台人员
-				String depm = "部门：" + userService.getUserByNo(userID).getDeptName() + "\n";
+				//推送前台人员
+				String depm = "部门："+userService.getUserByNo(userID).getDeptName()+"\n";
 				List<AikoRecepemp> gdaxRecEmps = userService.getRempEmpByFrom("广东爱旭");
 				List<AikoRecepemp> zjaxRecEmps = userService.getRempEmpByFrom("浙江爱旭");
 				String hys = roomService.getRoomById(amd.getRoomId()).getMeetRoomName();
-				if (hys.indexOf("广东") >= 0) {
+				if(hys.indexOf("广东") >= 0) {
 					for (AikoRecepemp aikoRecepemp : gdaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
 						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm); // 消息推送
 					}
-				} else if (hys.indexOf("浙江") >= 0) {
+				}else if(hys.indexOf("浙江") >= 0){
 					for (AikoRecepemp aikoRecepemp : zjaxRecEmps) {
-						System.out.println("前台\n" + aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
+						System.out.println("前台\n"+aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
 						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm); // 消息推送
 					}
 				}
@@ -582,7 +579,7 @@ public class MeetController {
 	}
 
 	/**
-	 * @desc 检查是否登陆
+	 * @desc	检查是否登陆
 	 * @param res
 	 */
 	public void checkIfLogin(HttpServletResponse res) {
