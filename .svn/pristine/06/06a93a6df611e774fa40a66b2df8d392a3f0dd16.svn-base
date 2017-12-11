@@ -152,7 +152,7 @@ public class OAUtils {
 				wrti[15].setView(true);
 				wrti[15].setEdit(true);
 				
-				requestInfo.setRequestName("AD16-会议室长期使用申请");
+				requestInfo.setRequestName("会议室长期使用申请");
 
 				// 只有一个主表单
 				WorkflowRequestTableRecord[] wrtri = new WorkflowRequestTableRecord[1];

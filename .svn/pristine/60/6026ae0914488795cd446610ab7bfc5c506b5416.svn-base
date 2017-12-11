@@ -612,9 +612,9 @@ var dkmi = ''
 				<!-- <span><a style="width: 90px; height: 40px; font-weight:bold; color: red;"
 							id="appMeet1" onclick="applyMeet1()" class="easyui-linkbutton"
 							data-options="iconCls:'icon-add',plain:true">长期预订</a></span> -->
-				<span><a style="width: 90px; height: 40px; font-weight:bold; color: white;"
+				<span><a style="width: 90px; height: 40px; font-weight:bold; color: red;"
 							id="appMeet2" onclick="applyMeet2()" class="easyui-linkbutton"
-							data-options="iconCls:'icon-reload',plain:true">长期预订</a></span>
+							data-options="iconCls:'icon-add',plain:true">长期预订</a></span>
 				
 				<!-- <span><a style="width: 90px; height: 40px; 
 							font-size: 20px; color: white; font-weight: bold;"

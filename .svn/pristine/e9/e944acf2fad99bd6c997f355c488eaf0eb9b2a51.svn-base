@@ -7,13 +7,6 @@
 
 package com.aixu.meeting.oa.workflow;
 
-import org.apache.axis.description.TypeDesc;
-import org.apache.axis.description.ElementDesc;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.ser.BeanSerializer;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.ser.BeanDeserializer;
-
 public class WorkflowRequestTableRecord  implements java.io.Serializable {
     private java.lang.Integer recordOrder;
 
@@ -117,19 +110,19 @@ public class WorkflowRequestTableRecord  implements java.io.Serializable {
     }
 
     // Type metadata
-    private static TypeDesc typeDesc =
-        new TypeDesc(WorkflowRequestTableRecord.class, true);
+    private static org.apache.axis.description.TypeDesc typeDesc =
+        new org.apache.axis.description.TypeDesc(WorkflowRequestTableRecord.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://webservices.workflow.weaver", "WorkflowRequestTableRecord"));
-        ElementDesc elemField = new ElementDesc();
+        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("recordOrder");
         elemField.setXmlName(new javax.xml.namespace.QName("http://webservices.workflow.weaver", "recordOrder"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
         elemField.setMinOccurs(0);
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
-        elemField = new ElementDesc();
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("workflowRequestTableFields");
         elemField.setXmlName(new javax.xml.namespace.QName("http://webservices.workflow.weaver", "workflowRequestTableFields"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://webservices.workflow.weaver", "WorkflowRequestTableField"));
@@ -142,31 +135,31 @@ public class WorkflowRequestTableRecord  implements java.io.Serializable {
     /**
      * Return type metadata object
      */
-    public static TypeDesc getTypeDesc() {
+    public static org.apache.axis.description.TypeDesc getTypeDesc() {
         return typeDesc;
     }
 
     /**
      * Get Custom Serializer
      */
-    public static Serializer getSerializer(
+    public static org.apache.axis.encoding.Serializer getSerializer(
            java.lang.String mechType, 
            java.lang.Class _javaType,  
            javax.xml.namespace.QName _xmlType) {
         return 
-          new  BeanSerializer(
+          new  org.apache.axis.encoding.ser.BeanSerializer(
             _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
-    public static Deserializer getDeserializer(
+    public static org.apache.axis.encoding.Deserializer getDeserializer(
            java.lang.String mechType, 
            java.lang.Class _javaType,  
            javax.xml.namespace.QName _xmlType) {
         return 
-          new  BeanDeserializer(
+          new  org.apache.axis.encoding.ser.BeanDeserializer(
             _javaType, _xmlType, typeDesc);
     }
 

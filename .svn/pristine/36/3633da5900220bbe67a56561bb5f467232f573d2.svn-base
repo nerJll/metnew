@@ -1,8 +1,5 @@
 package com.aixu.meeting.oa.workflow;
 
-import javax.xml.rpc.ServiceException;
-import javax.xml.rpc.Stub;
-
 public class WorkflowServicePortTypeProxy implements com.aixu.meeting.oa.workflow.WorkflowServicePortType {
   private String _endpoint = null;
   private com.aixu.meeting.oa.workflow.WorkflowServicePortType workflowServicePortType = null;
@@ -21,13 +18,13 @@ public class WorkflowServicePortTypeProxy implements com.aixu.meeting.oa.workflo
       workflowServicePortType = (new com.aixu.meeting.oa.workflow.WorkflowServiceLocator()).getWorkflowServiceHttpPort();
       if (workflowServicePortType != null) {
         if (_endpoint != null)
-          ((Stub)workflowServicePortType)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+          ((javax.xml.rpc.Stub)workflowServicePortType)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
         else
-          _endpoint = (String)((Stub)workflowServicePortType)._getProperty("javax.xml.rpc.service.endpoint.address");
+          _endpoint = (String)((javax.xml.rpc.Stub)workflowServicePortType)._getProperty("javax.xml.rpc.service.endpoint.address");
       }
       
     }
-    catch (ServiceException serviceException) {}
+    catch (javax.xml.rpc.ServiceException serviceException) {}
   }
   
   public String getEndpoint() {
@@ -37,7 +34,7 @@ public class WorkflowServicePortTypeProxy implements com.aixu.meeting.oa.workflo
   public void setEndpoint(String endpoint) {
     _endpoint = endpoint;
     if (workflowServicePortType != null)
-      ((Stub)workflowServicePortType)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+      ((javax.xml.rpc.Stub)workflowServicePortType)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
     
   }
   

@@ -68,7 +68,7 @@ public class MeetService {
 	}
 
 	@Transactional
-	public synchronized void saveMeet(AixuMeeting meet, String id) {
+	public void saveMeet(AixuMeeting meet, String id) {
 		// 赋初值
 		meet.setMeetId(id);
 		meet.setMeetCreateTime(new Date());

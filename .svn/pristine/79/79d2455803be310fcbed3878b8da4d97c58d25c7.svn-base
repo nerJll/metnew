@@ -20,7 +20,7 @@ import com.aixu.meeting.oa.workflow.WorkflowServicePortTypeProxy;
  * @date 2017年12月8日
  */
 public class OAUtils {
-	// 触发OA
+	// 框架协议
 	public static void CFOA(OAPojo oapojo) {
 		List<Map<String, String>> itemTableMap = null;
 		Map<String, String> mainTableMap = null;
@@ -152,7 +152,7 @@ public class OAUtils {
 				wrti[15].setView(true);
 				wrti[15].setEdit(true);
 				
-				requestInfo.setRequestName("AD16-会议室长期使用申请");
+				requestInfo.setRequestName("会议室长期使用申请");
 
 				// 只有一个主表单
 				WorkflowRequestTableRecord[] wrtri = new WorkflowRequestTableRecord[1];

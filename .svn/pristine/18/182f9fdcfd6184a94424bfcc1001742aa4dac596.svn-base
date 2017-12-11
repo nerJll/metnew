@@ -520,10 +520,6 @@ var dkmi = ''
 			form.appendTo('body').submit().remove();
 		}
 	}
-	
-	function applyMeet2(){
-		window.location.href='${ctx}/common/applyLongTime1'
-	}
 </script>
 </head>
 <body class="easyui-layout,fit:true">
@@ -609,12 +605,9 @@ var dkmi = ''
 				<span><a style="width: 80px; height: 40px; font-weight:bold; color: white;"
 							id="appMeet" onclick="applyMeet()" class="easyui-linkbutton"
 							data-options="iconCls:'icon-add',plain:true">提交</a></span>
-				<!-- <span><a style="width: 90px; height: 40px; font-weight:bold; color: red;"
+				<span><a style="width: 90px; height: 40px; font-weight:bold; color: red;"
 							id="appMeet1" onclick="applyMeet1()" class="easyui-linkbutton"
-							data-options="iconCls:'icon-add',plain:true">长期预订</a></span> -->
-				<span><a style="width: 90px; height: 40px; font-weight:bold; color: white;"
-							id="appMeet2" onclick="applyMeet2()" class="easyui-linkbutton"
-							data-options="iconCls:'icon-reload',plain:true">长期预订</a></span>
+							data-options="iconCls:'icon-add',plain:true">长期预订</a></span>
 				
 				<!-- <span><a style="width: 90px; height: 40px; 
 							font-size: 20px; color: white; font-weight: bold;"

@@ -1,7 +1,6 @@
 package com.aixu.meeting.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -334,11 +333,9 @@ public class CommonController {
 	 * @param res
 	 * @param model
 	 * @return
-	 * @throws ParseException
 	 */
 	@PostMapping("/save-LongApply1")
-	public String saveLongApply1(AixuMeeting meet, HttpServletRequest req, HttpServletResponse res, Model model)
-			throws ParseException {
+	public String saveLongApply1(AixuMeeting meet, HttpServletRequest req, HttpServletResponse res, Model model) {
 		// 判断是否登陆
 		checkIfLogin(res);
 		// 获取当前登陆人工号
@@ -347,30 +344,29 @@ public class CommonController {
 		// String userID = "1016087";
 		// String userName = "姜林乐";
 
-		List<Date> staTimes = DateUtil.preaseDate("开始时间", meet.getStaTime(), meet.getEndTime());
-		List<Date> endTimes = DateUtil.preaseDate("结束时间", meet.getStaTime(), meet.getEndTime());
+		meet.setResOne(userID); // 设置申请人id
+		//String meetRoomIds = meet.getMeetRoomId(); // 获取会议室id
 
-		StringBuffer meetIds = new StringBuffer(); // 用于存储所有会议的id
-		String roomID = meet.getMeetRoomId();	
-		String meetId1 = "";
-		for (int i = 0; i < staTimes.size(); i++) {
-			meet.setResOne(userID); // 设置申请人id
-			String meetId = IDUtils.getUuid(true); // 设置会议id
-			meetId1 = meetId;
-			meet.setStaTime(staTimes.get(i));		//开始时间
-			meet.setEndTime(endTimes.get(i));
-			meetService.saveMeet1(meet, meetId); // 存储meet
-			meetAndRoomService.saveMeetAndRoom(meetId, roomID, userID);//存储meetandroom
-			meetIds.append(i == staTimes.size() - 1 ? meetId : meetId + ",");//长申请id
-		}
+		String meetId = IDUtils.getUuid(true); // 设置会议id
+
+		//String[] nos = req.getParameterValues("gonghao"); // 获取工号
+
+		meetService.saveMeet1(meet, meetId); // 存储第一个
+
+		//StringBuffer meetIds = new StringBuffer(); // 用于存储所有会议的id
+		//meetIds.append(meetId + ","); // 存储第一个会议id
+
+		String roomID = meet.getMeetRoomId();
+		
+		meetAndRoomService.saveMeetAndRoom(meetId, roomID, userID);
 
 		AikoLongapproom alpr = new AikoLongapproom(); // 存储长时间申请id
 		String lpId = IDUtils.getUuid(true);
 		alpr.setLpId(lpId);
-		alpr.setLpMeetids(meetIds.toString());
+		alpr.setLpMeetids(meetId);
 		aprDao.insert(alpr);
 
-		List<AixuMeetandroom> meetAndRooms = meetAndRoomService.getMeetRoomByMeetId(meetId1);
+		List<AixuMeetandroom> meetAndRooms = meetAndRoomService.getMeetRoomByMeetId(meetId);
 		// 私有信息模块
 		ArrayList<MeetingVo> roomList = new ArrayList<>();
 		for (AixuMeetandroom aixuMeetandroom : meetAndRooms) {
@@ -380,11 +376,18 @@ public class CommonController {
 			vo.setEmployeeName(aixuMeetandroom.getPersonNames());
 			roomList.add(vo);
 		}
-		
+		model.addAttribute("meetInfo", meet);
 		model.addAttribute("rooms", roomList);
-		meet.setStaTime(staTimes.get(0));
-		meet.setEndTime(endTimes.get(endTimes.size()-1));
-		model.addAttribute("meetInfo", meet);	//model存储meet信息
+
+		/*String loopType = req.getParameter("loopType");
+		String loopTimes = req.getParameter("loopTimes");
+
+		String cxzq = "";
+		cxzq += loopType.equals("日循环") ? ("每天开1次，持续" + loopTimes + "天") : ("每周开1次，持续" + loopTimes + "周");*/
+
+		model.addAttribute("meetInfo", meet);
+		model.addAttribute("rooms", roomList);
+		//model.addAttribute("cxzq", cxzq);
 
 		AikoUser au = userService.getUserByNo(userID);
 		// 封装OAPOJO触发OA
@@ -395,8 +398,8 @@ public class CommonController {
 		oapojo.setPosition((String) SystemApi.getCurrentUser().get("position"));// 职位
 		oapojo.setCompany(req.getParameter("company"));// 公司
 		oapojo.setEmpPhNo((String) SystemApi.getCurrentUser().get("mobile"));// 手机号
-		oapojo.setStaTime(DateUtil.getDateFormat(staTimes.get(0)));// 开始时间
-		oapojo.setEndTime(DateUtil.getDateFormat(endTimes.get(endTimes.size()-1)));// 结束时间
+		oapojo.setStaTime(DateUtil.getDateFormat(meet.getStaTime()));// 开始时间
+		oapojo.setEndTime(DateUtil.getDateFormat(meet.getEndTime()));// 结束时间
 		oapojo.setLoopCycle("");// 持续周期
 		oapojo.setReason(req.getParameter("reason"));// 理由
 		oapojo.setMeetTheme(meet.getMeetTheme());// 主题
@@ -405,10 +408,10 @@ public class CommonController {
 		oapojo.setApplyName(userName);// 申请 人i姓名
 		oapojo.setApplyNo(userID);// 申请人工号
 		oapojo.setLpid(lpId);// 长时间申请表id
-		//logger.info("oapojo={}", oapojo);
+		logger.info("oapojo={}", oapojo);
 		OAUtils.CFOA(oapojo);
-
-		model.addAttribute("reason", req.getParameter("reason"));	//理由
+		
+		model.addAttribute("reason", req.getParameter("reason"));
 		// 通知审核人员，需要工号
 		return "meet/success-long1";
 	}
@@ -612,11 +615,26 @@ public class CommonController {
 		model.addAttribute("scbs", scbs);
 		// 填充
 		model.addAttribute("users", userlist);
+		// model.addAttribute("its", itList);
+		// model.addAttribute("zjbs", zjbList);
+		// model.addAttribute("rlzys", rlzyList);
+		// model.addAttribute("cws", cwList);
+		// model.addAttribute("xss", xsList);
+		// model.addAttribute("scbs", scbList);
+		// model.addAttribute("jhkzs", jhkzList);
+		// model.addAttribute("cgs", cgList);
+		// model.addAttribute("yfs", cgList);
+		// model.addAttribute("markets", marketList);
+		// model.addAttribute("pzs", pzList);
+		// // 销售
+		// model.addAttribute("xss", xsList);
+		// // 设备
+		// model.addAttribute("equps", equipList);
 		// 发送会议室
 		model.addAttribute("rooms", onlyTwo);
 		// 发送申请人工号
 		model.addAttribute("userId", userId);
-
+		
 		// 发送申请人姓名
 		model.addAttribute("userName", userName);
 		return "meet/applyLongTime1";

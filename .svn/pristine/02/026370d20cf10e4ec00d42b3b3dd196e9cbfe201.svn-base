@@ -367,29 +367,4 @@ public class DateUtil {
 		}
 		return dates;
 	}
-    
-    /**
-	 * 累加天数
-	 * @param index 遍历下标
-	 * @param firstDay 
-	 * @return 
-	 */
-	public static synchronized Date addDay(int index, Date firstDay, String flag) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(firstDay);
-		if (flag.equals("日循环")) {
-			// 日循环
-			c.add(Calendar.DAY_OF_MONTH, index);
-			Date retDate = c.getTime();
-			return retDate;
-		} else if (flag.equals("周循环")){
-			// 周循环
-			c.add(Calendar.DAY_OF_MONTH, index * 7);
-			Date retDate = c.getTime();
-			return retDate;
-		} else {
-			return null;
-		}
-	}
-	
 }

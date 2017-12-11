@@ -1,6 +1,10 @@
 package com.aixu.meeting.controller;
 
 
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -8,7 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.aiko.common.util.SystemApi;
+import com.aixu.meeting.entity.OAPojo;
 import com.aixu.meeting.utils.AjaxObject;
+import com.aixu.meeting.utils.OAUtils;
 import com.aixu.meeting.utils.WeChatUtil;
 
 /** 
@@ -20,7 +27,8 @@ import com.aixu.meeting.utils.WeChatUtil;
 @Controller
 @RequestMapping("/test")
 public class TestController {
-
+	private final static Logger logger = LoggerFactory.getLogger(TestController.class);
+	
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate; //数据可显
 
@@ -74,6 +82,28 @@ public class TestController {
 	@GetMapping("/test5")
 	public String test5() {
 		return "meet/testIndex2";
+	}
+	
+	@GetMapping("/test6")
+	@ResponseBody
+	public String test6() {
+		Map<?,?> map = SystemApi.getCurrentUser();
+		for (Map.Entry<?, ?> entry : map.entrySet()) {
+			logger.info("键值对={}",entry.getKey()+"::"+entry.getValue());
+		}
+		return "成功";
+	}
+	
+	@RequestMapping("/cufaoa")
+	@ResponseBody
+	public String cufaOA1() {
+		try {
+			OAUtils.CFOA(new OAPojo());
+			return "成功";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "失败";
+		}
 	}
 }
  

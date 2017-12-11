@@ -91,7 +91,8 @@
 						</#if>
 					</td>
 					<td style="text-align: center">${meet.staTime?string('yyyy年MM月dd日
-						HH:mm')} ~ ${meet.endTime?string('HH:mm')}</td>
+						HH:mm')} ~ ${meet.endTime?string('yyyy年MM月dd日
+						HH:mm')}</td>
 					<td style="text-align: center">${meet.meetType}</td>
 					<td style="text-align: center"><#if meet.meetType=="视频会议">
 						${meet.resTwo} <#else> --- </#if></td>
