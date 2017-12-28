@@ -210,10 +210,10 @@ public class RoomController {
 			HttpServletRequest req, @RequestParam(name = "staTime", required = false) String staTime,
 			@RequestParam(name = "endTime", required = false) String endTime,
 			@RequestParam(name = "state", required = false) String state) {
-		// String userId = (String)SystemApi.getCurrentUser().get("userid");
-		// String userName = (String)SystemApi.getCurrentUser().get("name");
-		String userId = "1016087";
-		String userName = "姜林乐";
+		String userId = (String)SystemApi.getCurrentUser().get("userid");
+		String userName = (String)SystemApi.getCurrentUser().get("name");
+		//String userId = "1016087";
+		//String userName = "姜林乐";
 
 		List<AixuMeetingroom> onlyTwo = new ArrayList<AixuMeetingroom>();
 		String[] roomId = roomIds.split(",");

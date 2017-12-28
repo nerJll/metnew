@@ -25,7 +25,7 @@ var kysph = 1
 var kysphyss = 0
 //不可用会议室号
 var akNoAudioMeetRoom=new Array("aiko_2","aiko_4","aiko_5","aiko_6","aiko_8","aiko_10","aiko_12")
-var axNoAudioMeetRoom=new Array("aixu_2","aixu_3","aixu_4","aixu_6","aixu_7","aixu_8","aixu_11","aixu_12","aixu_14","aixu_15")
+var axNoAudioMeetRoom=new Array("aixu_3","aixu_4","aixu_5","aixu_6","aixu_7","aixu_8","aixu_11","aixu_12","aixu_14","aixu_15")
 var romi = ''
 var dkmi = ''
 
@@ -980,7 +980,10 @@ var dkmi = ''
 											style="width: 240px; height: 170px; background-color: #4b5f7b; border-radius: 20px;">
 											<table
 												style="width: 100%; text-align: center; font-size: 35px">
-												<tr style="height: 49px">
+												<tr style="height: 40px">
+													<td colspan="2"><img alt="视频会议"
+														src="${ctx}/images/camera6.png" width=35px height=35px>
+													</td>
 												</tr>
 												<tr>
 													<td style="color: white" colspan="3"><b>2#</b></td>
@@ -1018,76 +1021,35 @@ var dkmi = ''
 								<tr>
 									<td width=25px></td>
 									<td colspan="3">
-										<div id="aixu_5"
-											style="width: 240px; height: 150px; background-color: #4b5f7b; border-radius: 20px;">
-											<table
-												style="width: 100%; text-align: center; font-size: 25px">
-												<tr style="height: 40px">
-													<td colspan="2"><img alt="视频会议"
-														src="${ctx}/images/camera6.png" width=35px height=35px>
-													</td>
-												</tr>
-												<tr>
-													<td style="color: white" colspan="2"><b>制造部会议室</b></td>
-												</tr>
-												<tr>
-													<td>
-														<div id="aixu_5a">
-															<div id="aixu_5b" style="float: left">
-																<a href="javascript:void(0)" class="easyui-linkbutton"
-																	data-options="iconCls:'icon-search',plain:true"
-																	style="width: 115px; height: 60px" id='queroom12'
-																	onclick="getRoomInfo('aixu_5')"></a>
-															</div>
-															<div id="aixu_5c" style="float: right">
-																<a href="javascript:void(0)" class="easyui-linkbutton"
-																	data-options="iconCls:'icon-ok',plain:true"
-																	style="width: 115px; height: 60px" id='selectroom12'
-																	onclick="checkDiv('aixu_5')"></a>
-															</div>
-														</div>
-														<div id="aixu_5d" style="float: right">
-															<a href="javascript:void(0)" class="easyui-linkbutton"
-																data-options="iconCls:'icon-ok',plain:true"
-																style="width: 115px; height: 60px" id='disecroom12'
-																onclick="RemoveCk('aixu_5')"></a>
-														</div>
-													</td>
-												</tr>
-											</table>
-										</div>
-									</td>
-									<td colspan="2">
 										<div id="aixu_3"
-											style="width: 240px; height: 150px; background-color: #4b5f7b; border-radius: 20px;">
+											style="width: 240px; height: 140px; background-color: #4b5f7b; border-radius: 20px;">
 											<table
 												style="width: 100%; text-align: center; font-size: 25px">
-												<tr style="height: 15px">
+												<tr style="height: 5px">
 												</tr>
 												<tr>
-													<td style="color: white" colspan="3"><b>制造副总<br>办公室</b></td>
+													<td style="color: white" colspan="2"><b>制造副总<br>办公室</b></td>
 												</tr>
-												<tr height=10px></tr>
 												<tr>
 													<td>
 														<div id="aixu_3a">
 															<div id="aixu_3b" style="float: left">
 																<a href="javascript:void(0)" class="easyui-linkbutton"
 																	data-options="iconCls:'icon-search',plain:true"
-																	style="width: 115px; height: 40px" id='queroom15'
+																	style="width: 115px; height: 55px" id='queroom15'
 																	onclick="getRoomInfo('aixu_3')"></a>
 															</div>
 															<div id="aixu_3c" style="float: right">
 																<a href="javascript:void(0)" class="easyui-linkbutton"
 																	data-options="iconCls:'icon-ok',plain:true"
-																	style="width: 115px; height: 40px" id='selectroom15'
+																	style="width: 115px; height: 55px" id='selectroom15'
 																	onclick="checkDiv('aixu_3')"></a>
 															</div>
 														</div>
 														<div id="aixu_3d" style="float: right">
 															<a href="javascript:void(0)" class="easyui-linkbutton"
 																data-options="iconCls:'icon-ok',plain:true"
-																style="width: 115px; height: 40px" id='disecroom15'
+																style="width: 115px; height: 55px" id='disecroom15'
 																onclick="RemoveCk('aixu_3')"></a>
 														</div>
 													</td>
@@ -1095,12 +1057,7 @@ var dkmi = ''
 											</table>
 										</div>
 									</td>
-									<td width=35px></td>
-								</tr>
-								<!-- 三排 -->
-								<tr>
-									<td width=25px></td>
-									<td colspan="3">
+									<td colspan="2">
 										<div id="aixu_4"
 											style="width: 240px; height: 140px; background-color: #4b5f7b; border-radius: 20px;">
 											<table
@@ -1137,8 +1094,6 @@ var dkmi = ''
 												</tr>
 											</table>
 										</div>
-									</td>
-									<td colspan="2">
 									</td>
 									<td width=35px></td>
 								</tr>

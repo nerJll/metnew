@@ -106,7 +106,7 @@ public class MeetController {
 				String[] empNos = aixuMeetandroom.getPersonNo().split(" ");
 				for (String empNo : empNos) {
 					System.out.println(empNo + cancelInfo + hysmc);
-					// WeChatUtil.weChatPush(empNo, cancelInfo + hysmc); // 消息推送
+					WeChatUtil.weChatPush(empNo, cancelInfo + hysmc); // 消息推送
 				}
 				// 推送前台人员
 				String userID = (String) SystemApi.getCurrentUser().get("userid");
@@ -116,13 +116,13 @@ public class MeetController {
 				if (hys.indexOf("广东") >= 0) {
 					for (AikoRecepemp aikoRecepemp : gdaxRecEmps) {
 						System.out.println("前台\n" + aikoRecepemp.getRempEno() + cancelInfo + hysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), cancelInfo + hysmc+ depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), cancelInfo + hysmc+ depm);
 						// // 消息推送
 					}
 				} else if (hys.indexOf("浙江") >= 0) {
 					for (AikoRecepemp aikoRecepemp : zjaxRecEmps) {
 						System.out.println("前台\n" + aikoRecepemp.getRempEno() + cancelInfo + hysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), cancelInfo + hysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), cancelInfo + hysmc + depm);
 						// // 消息推送
 					}
 				}
@@ -238,8 +238,8 @@ public class MeetController {
 				for (String no : personNos) {
 					System.out.println(
 							"发送数据：\n" + no + gyxx + fqr + hyzt + hyyc + sta + end + chryxm + syss + bhysmc + bhysxm);
-					// WeChatUtil.weChatPush(no, (gyxx + fqr + hyzt + hyyc + sta + end + chryxm + syss +
-					// bhysmc + bhysxm));
+					WeChatUtil.weChatPush(no, (gyxx + fqr + hyzt + hyyc +  sta + end + chryxm + syss +
+					bhysmc + bhysxm));
 				}
 				// 推送前台人员
 				String depm = "部门：" + userService.getUserByNo(userID).getDeptName() + "\n";
@@ -250,15 +250,15 @@ public class MeetController {
 					for (AikoRecepemp aikoRecepemp : gdaxRecEmps) {
 						System.out.println("前台\n" + aikoRecepemp.getRempEno() + gyxx + fqr + hyzt + hyyc + sta + end
 								+ bhysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt + hyyc + 
-						// sta + end + bhysmc + depm); // 消息推送
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt + hyyc +
+						sta + end + bhysmc + depm); // 消息推送
 					}
 				} else if (hys.indexOf("浙江") >= 0) {
 					for (AikoRecepemp aikoRecepemp : zjaxRecEmps) {
 						System.out.println("前台\n" + aikoRecepemp.getRempEno() + gyxx + fqr + hyzt + hyyc + sta + end
 								+ bhysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt + hyyc + 
-						// sta + end + bhysmc + depm); // 消息推送
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), gyxx + fqr + hyzt + hyyc +
+						sta + end + bhysmc + depm); // 消息推送
 					}
 				}
 				bhysmc = "会议室:";
@@ -310,10 +310,10 @@ public class MeetController {
 					// System.out.println("发送数据" + s + "\n" + sb + hysmc + bhysry + dlzh + dlmm);
 					if (hysmc.indexOf("00") == -1) { // 不是虚拟端口
 						System.out.println("发送数据" + s + "\n" + sb + sphyh + sphymm + hysmc + bhysry);
-						// WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry);
+						WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry);
 					} else {
 						System.out.println("发送数据" + s + "\n" + sb + sphyh + sphymm + hysmc + bhysry + dlzh + dlmm);
-						// WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry + dlzh + dlmm);
+						WeChatUtil.weChatPush(s, sb + sphyh + sphymm + hysmc + bhysry + dlzh + dlmm);
 					}
 				}
 				// 推送前台人员
@@ -324,13 +324,13 @@ public class MeetController {
 				if (hys.indexOf("广东") >= 0) {
 					for (AikoRecepemp aikoRecepemp : gdaxRecEmps) {
 						System.out.println("前台\n" + aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm);
 						// // 消息推送
 					}
 				} else if (hys.indexOf("浙江") >= 0) {
 					for (AikoRecepemp aikoRecepemp : zjaxRecEmps) {
 						System.out.println("前台\n" + aikoRecepemp.getRempEno() + recempInfo + hysmc + depm);
-						// WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm);
+						WeChatUtil.weChatPush(aikoRecepemp.getRempEno(), recempInfo + hysmc + depm);
 						// // 消息推送
 					}
 				}
